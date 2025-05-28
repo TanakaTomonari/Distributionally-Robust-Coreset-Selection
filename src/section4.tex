@@ -1,0 +1,89 @@
+
+\section{Related Works and Limitations}
+\label{sec:related-limits}
+
+\subsection{Related Works}
+\label{subsec:related}
+
+\textbf{Coreset Selection}
+Coreset selection is a technique for selecting important data samples in training to enhance data efficiency, reduce the computational cost, and maintain or improve model accuracy.
+%
+Currently, several approaches exist, each differing in how they evaluate the importance of data.
+%
+Representative methods are outlined below.
+%
+\textbf{Geometry-Based Methods:}
+%
+Geometry-Based Methods utilize the data distribution in the feature space to improve learning efficiency by reducing redundant samples.
+%
+Examples include k-Center-Greedy\citep{sener2017active}, which minimizes the maximum distance between samples, and Herding\citep{welling2009herding}, which iteratively selects samples based on the distance between the coreset center and the original dataset center.
+%
+\textbf{Uncertainty-Based Methods:}
+%
+Uncertainty-Based Methods prioritize selecting samples for which the model has the least confidence.
+%
+Methods such as Least Confidence, Entropy, and Margin select high-uncertainty samples based on these metrics\citep{coleman2019selection}.
+%
+\textbf{Error/Loss-Based Methods:}
+%
+Error/Loss-Based Methods select important samples based on loss function values or gradient information.
+%
+Examples include GraNd\citep{paul2021deep} and EL2N\citep{paul2021deep}, which are based on the magnitude of the loss.
+%
+\red{\textbf{Sensitivity-Based Methods:}}
+%
+\red{Sensitivity-Based Methods are similar to Error/Loss-Based Methods, however, for each sample, its importance value is defined by the maximum of the relative loss (ratio of the loss of the sample to the sum of the losses of all samples) among all possible model parameters. It can assure the upper bound of the model parameter shifts by the coreset selection in more strict manner (called the \emph{$\varepsilon$-coreset}) \citep{munteanu2018coresets,tukan2020coresets,tuka2021coresets,tolochinksy2022generic,alishahi2024dimensional}.}
+%
+\textbf{Decision Boundary-Based Methods:}
+%
+Decision Boundary-Based Methods focus on selecting samples near decision boundaries that are difficult to classify.
+%
+Examples include Adversarial DeepFool\citep{ducoffe2018adversarial} and Contrastive Active Learning (CAL)\citep{margatina2021active}.
+%
+\textbf{Gradient Matching-Based Methods:}
+%
+Gradient Matching-Based Methods aim to approximate the gradient of the entire dataset with a small number of samples.
+%
+CRAIG\citep{mirzasoleiman2020coresets} and GradMatch\citep{killamsetty2021grad} utilize this approach by leveraging gradient information.
+%
+\textbf{Bilevel Optimization-Based Methods:}
+%
+Bilevel Optimization-Based Methods formulate coreset selection as a bilevel optimization problem.
+%
+Retrieve\citep{killamsetty2021retrieve} and Glister\citep{killamsetty2021glister} have been applied to continual learning and active learning.
+%
+\textbf{Submodularity Optimization-Based Methods:}
+%
+Optimization methods based on Submodular functions\citep{iyer2013submodular} enable combinatorial optimization by introducing submodular functions to avoid the combinatorial explosion, allowing for the optimization of diverse sets of samples.
+%
+Examples of submodular functions include Graph Cut (GC), Facility Location (FL), and Log-Determinant (LD)\citep{iyer2021submodular}.
+%
+Other approaches can be found, for example, in \citet{guo2022deepcore}.
+
+\textbf{Distributionally Robust}
+DR has been studied in various machine learning problems to enhance model robustness against variations in data distribution.
+%
+The DR learning problem is generally formulated as a worst-case optimization problem to account for potential distributional shifts.
+%
+Consequently, techniques that integrate DR learning and optimization have been explored in both fields.
+%
+The proposed method builds upon such DR techniques, emphasizing effective training sample selection even when the future test distribution is unknown. It incorporates DR considerations during sample selection rather than during training computation.
+%
+While the primary goal of the proposed method is to reduce computational resources through sample removal, this process also has practical implications in other scenarios.
+%
+For example, in continual learning (e.g., see \citet{wang2022memory}), managing data by selectively retaining or discarding samples is crucial, especially when anticipating shifts in future data distributions.
+%
+Improper deletion of important data may result in catastrophic forgetting\citep{kirkpatrick2017overcoming}, where the model loses previously acquired knowledge after learning on new data.
+%
+Our proposed coreset selection method explicitly addresses this DR setting, and, to the best of our knowledge, no existing studies explore coreset selection under such a framework.
+%
+Moreover, many existing coreset selection methods are heuristic in nature and lack robust theoretical guarantees.
+
+\subsection{Limitations}
+\label{subsec:limits}
+
+The proposed DRCS method is developed for binary classification problems and is applicable to models (such as SVM and logistic regression) where the primal objective function (loss function + regularization term) possesses strong convexity. Therefore, it cannot be directly applied to deep learning models. However, by appropriately selecting a regularization function, the method can also be extended to kernel methods. Consequently, we can well approximate the deep learning by utilizing the recently popular Neural Tangent Kernel(NTK)\citep{neuraltangents2020}.
+
+The proposed DRCS method utilizes a bound of the model parameter, and a similar approach has been studied in instance selection by \citet{10.1162/neco_a_01619}. The method proposed by \citet{10.1162/neco_a_01619} (DRSSS) is effective for sample-sparse models due to its characteristics, but it is limited to models that are both strongly convex and instance-sparse, and can remove only samples that do not change the training results at all.
+
+In contrast, the proposed method is applicable to any model with strong convexity, making it a more versatile approach.

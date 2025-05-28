@@ -1,0 +1,109 @@
+
+\documentclass[10pt]{article} % For LaTeX2e
+\usepackage{tmlr}
+% If accepted, instead use the following line for the camera-ready submission:
+%\usepackage[accepted]{tmlr}
+% To de-anonymize and remove mentions to TMLR (for example for posting to preprint servers), instead use the following:
+%\usepackage[preprint]{tmlr}
+
+% Optional math commands from https://github.com/goodfeli/dlbook_notation.
+\input{math_commands.tex}
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{subcaption}
+
+
+% %%%%%%%擬似コード用%%%%%%%%%%%%%%%%%
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+\usepackage{bm}
+\usepackage{graphicx}
+% \usepackage[pdftex]{graphicx}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[normalem]{ulem}
+\usepackage{captdef}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{plain}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{assumption}[theorem]{Assumption}
+%\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{example}[theorem]{Example}
+
+% \newcommand{\argmax}{\mathop{\rm argmax}\limits}
+% \newcommand{\argmin}{\mathop{\rm argmin}\limits}
+\newcommand{\argsup}{\mathop{\rm argsup}\limits}
+\newcommand{\targmax}{{\rm argmax}}
+\newcommand{\targmin}{{\rm argmin}}
+\newcommand{\targsup}{{\rm argsup}}
+\newcommand{\sqtimes}{{\raisebox{0.08em}{$\times$}\hspace{-0.79em}\Box}}
+\newcommand{\lammax}{{\lambda_\mathrm{max}}}
+
+% mr.takeuchi
+\usepackage{mcr}
+
+\title{Distributionally Robust Coreset Selection under Covariate Shift}
+
+% Authors must not appear in the submitted version. They should be hidden
+% as long as the tmlr package is used without the [accepted] or [preprint] options.
+% Non-anonymous submissions will be rejected without review.
+
+\author{\name Kyunghyun Cho \email kyunghyun.cho@nyu.edu \\
+      \addr Department of Computer Science\\
+      University of New York
+      \AND
+      \name Raia Hadsell \email raia@google.com \\
+      \addr DeepMind
+      \AND
+      \name Hugo Larochelle \email hugolarochelle@google.com\\
+      \addr Mila, Universit\'e de Montr\'eal \\
+      Google Research\\
+      CIFAR Fellow}
+
+% The \author macro works with any number of authors. Use \AND 
+% to separate the names and addresses of multiple authors.
+
+\newcommand{\fix}{\marginpar{FIX}}
+\newcommand{\new}{\marginpar{NEW}}
+
+\def\month{MM}  % Insert correct month for camera-ready version
+\def\year{YYYY} % Insert correct year for camera-ready version
+\def\openreview{\url{https://openreview.net/forum?id=XXXX}} % Insert correct link to OpenReview for camera-ready version
+
+\begin{document}
+
+
+\maketitle
+
+\input{abstract.tex}
+\input{section1.tex}
+\input{section2.tex}
+\input{section3.tex}
+\input{section4.tex}
+\input{section5.tex}
+\input{section6.tex}
+
+% \newpage
+
+\bibliography{myref}
+\bibliographystyle{tmlr}
+\newpage
+
+\appendix
+
+\input{app1.tex}
+\input{app2.tex}
+\input{app3.tex}
+\input{app4.tex}
+
+\end{document}

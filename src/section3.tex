@@ -1,0 +1,182 @@
+% ------------------------------------------------------------------------------------------
+% sec3
+% ------------------------------------------------------------------------------------------
+\section{Proposed DRCS Method}
+\label{sec:method}
+
+%
+In this section, we present the proposed method to solve DRCS problem in \eqref{eq:DRCS-problem}.
+\red{As discussed in the previous section, since it is difficult to directly minimize the validation error (equation \ref{eq:WrVaEr}), we show how to derive and minimize its upper bound. Also, since it still includes difficult problems (a combinatorial optimization and an alternative optimization), we show specific algorithm to solve it using a greedy optimization.}
+
+\subsection{Upper Bound for the Worst-case Test Error}
+\label{subsec:UB_WC}
+%
+In this subsection, we present our main result.
+
+\subsubsection{Main Theorem}
+%
+An upper bound of the worst-case weighted validation error, which can serve as the worst-case test error estimator, $ {\rm WrVaEr}(\bm v) $ in \eqref{eq:WrVaEr}, is presented in the following theorem. Our main result can be formulated as \eqref{eq:main-bound}.
+
+\begin{definition}
+\red{For a convex function $f:\mathbb{R}^n\to\mathbb{R}$, its {\em convex conjugate} $f^*:\mathbb{R}^n\to\mathbb{R}\cup\{+\infty\}$ is defined as $f^*(\bm\beta) = \sup_{\bm\beta^\prime\in\mathbb{R}^n}(\bm\beta^\top\bm\beta^\prime - f(\bm\beta^\prime))$.}
+\end{definition}
+
+\begin{definition}
+A function $f:\mathbb{R}^n\to\mathbb{R}$ is called $\mu$-{\em strongly convex} if $f(\bm\beta) - \frac{\mu}{2}\|\bm\beta\|_2^2$ is convex.
+\end{definition}
+
+\begin{definition} \label{def:dual}
+For $\argmin_{\bm\beta} P_{\bm v,\bm w}(\bm \beta)$ in \eqref{eq:primal}, we define $f(\bm x; \bm\beta) = \bm{\beta}^\top \bm\phi(\bm x)$. Then, its {\em dual problem} is defined as
+\begin{align}
+\label{eq:dual}
+D_{\bm v,\bm w}(\bm\alpha) = - \frac{1}{\sum_{i\in[n]} v_i w_i}\sum_{i\in[n]} v_i w_i \ell^*(-\alpha_i) - \rho^*\left(\frac{1}{\sum_{i\in[n]} v_i w_i}(\operatorname{diag}(\bm v\otimes\bm w \otimes \bm y) \Phi)^\top\bm\alpha \right).
+\end{align}
+where $\Phi:=\left[\bm\phi(\bm x_1)\quad\bm\phi(\bm x_2) \ldots \bm\phi(\bm x_n)\right]^{\top} \in \RR^{n\times k}$, \red{and $\otimes$ is the element-wise product}.
+%
+Here, especially, if $\rho(\bm\beta) := \frac{\lambda}{2}\|\bm\beta\|_2^2$, it is calculated as
+\begin{align}
+D_{\bm v,\bm w}(\bm\alpha) = - \frac{1}{\sum_{i\in[n]} v_i w_i}\sum_{i\in[n]} v_i w_i \ell^*(-\alpha_i) - \frac{1}{2\lambda\left(\sum_{i\in[n]} v_i w_i\right)^2}\| (\operatorname{diag}(\bm v\otimes\bm w \otimes \bm y) \Phi)^\top\bm\alpha \|_2^2.
+\end{align}
+\end{definition}
+This derivation is presented in Appendix \ref{app:fenchel}.
+
+Then we state the main theorem as follows.
+\begin{theorem}
+ \label{theo:main}
+ {Assume that $\rho$ in the primal objective function $P_{\bm 1_n, \bm 1_n}$ is $\mu$-strongly convex with respect to $\bm \beta$.}
+ %
+ Let us denote the optimal primal and dual solutions for the entire training set (i.e., $v_i = 1 ~ \forall i \in [n]$) with uniform weights (i.e., $w_i = 1 ~ \forall i \in [n]$) as
+ \begin{align*}
+  \bm \beta^*_{\bm 1_n, \bm 1_n} = \argmin_{\bm \beta \in \RR^k} P_{\bm 1_n, \bm 1_n}(\bm \beta)
+  \quad\text{and}\quad
+  \bm \alpha^*_{\bm 1_n, \bm 1_n} = \argmax_{\bm \alpha \in \RR^n} D_{\bm 1_n, \bm 1_n}(\bm \alpha),
+ \end{align*}
+ respectively.
+ %
+ Then, an upper bound of the worst-case weighted validation error is written as 
+ \begin{align}
+  \label{eq:main-bound}
+  {\rm WrVaEr}(\bm v)
+  \le
+  {\rm WrVaEr}^{\rm UB}(\bm v)
+  =
+  1
+  -
+  \left(
+  \bm 1_{n^\prime}^\top \bm \zeta(\bm v)
+  -
+  Q
+  \sqrt{
+  \|\bm \zeta(\bm v)\|_2^2
+  -
+  \frac{
+  (\bm 1_{n^\prime}^\top \bm \zeta(\bm v))^2
+  }{
+  n^\prime
+  }
+  }
+  \right)
+  \frac{1}{n^\prime},
+ \end{align}
+ where,
+ \begin{align}
+  \label{eq:zeta}
+  & \bm \zeta(\bm v) \in \{0, 1\}^{n^\prime};
+  \quad
+  \zeta_i(\bm v)
+  =
+  I\left\{
+  y_i^\prime \bm \beta_{\bm 1_n, \bm 1_n}^{*\top} \bm \phi(\bm x_i^\prime) - \|\bm \phi(\bm x_i^\prime)\|_2 \sqrt{\frac{2}{\lambda} \max_{\bm w \in \cW} {\rm DG}(\bm v, \bm w)} > 0
+  \right\}, \\
+ %
+ \label{eq:duality_gap}
+ & {\rm DG}(\bm v, \bm w) := P_{\bm v, \bm w}(\bm \beta^*_{\bm 1_n, \bm 1_n}) - D_{\bm v, \bm w}({\bm \alpha}_{\bm 1_n, \bm 1_n}^{*}).
+\end{align}
+Here, the quantity ${\rm DG}$ is called the {\em duality gap} and it plays a main role of the upper bound of the validation error.
+
+Especially, if we use L2-regularization $\rho(\beta) := \frac{\lambda}{2}\|\bm\beta\|_2^2$, ${\rm DG}(\bm v, \bm w)$, the maximization $\max_{\bm w \in \cW} {\rm DG}(\bm v, \bm w)$ can be algorithmically computed.
+\end{theorem}
+
+We sketch the proof of Theorem~\ref{theo:main} in the next section. The complete proof is given in {Appendix~\ref{app:main-proof}}.
+
+\subsubsection{Proof Sketch}
+
+The proof sketch of Theorem~\ref{theo:main} is primarily divided into the following steps.
+
+\begin{enumerate}
+  \item
+  First, as a premise, consider a model where $P_{\boldsymbol{w}}$ is $\mu$-strongly convex.
+  \item
+  Second, under \red{the point 1 above}, derive the bound of model parameters. The model parameter vector ${\bm \beta}^*_{\bm v, \bm w}$, trained using the coreset vector $\bm v$ and weight vector $\bm w$, is guaranteed to converge within the range ${\cal B}^*_{\bm v, \bm w}$, which is represented by an L2-norm hypersphere \citep{10.1162/neco_a_01619}. 
+  %
+  A hypersphere of the radius is given by $R = \sqrt{\frac{2}{\lambda}{\rm DG}(\bm v, \bm w)}$, which is calculated in \eqref{eq:duality_gap}.
+  %
+  \item
+  Third, calculate a bound of the weighted validation error.
+  %
+  Using the hypersphere range ${\cal B}^*_{\bm v, \bm w}$, computed for a specific coreset vector $\bm v$ and weight vector $\bm w$, an upper bound of the weighted validation error can be analytically calculated.
+  %
+  This upper bound is determined by ${\rm DG}$. The larger ${\rm DG}$, the greater the upper bound becomes.
+  %
+  \item
+  Fourth, maximize ${\rm DG}$ with respect to the weight vector $\bm w$ for training dataset in \eqref{eq:maximum-gap}. We can obtain an upper bound of the worst-case weighted valdation error.
+		We can easily confirm that ${\rm DG}(\bm v, \bm w)$ is a convex function with respect to $\bm w$,
+		and therefore its maximization is difficult in general.
+		However, if we use L2-regularization, it becomes a convex quadratic function and its maximization
+		can be algorithmically computed by solving an eigenvalue problem. In fact,
+		\begin{align}  
+		\label{eq:maximum-gap}  
+		\max_{\bm w \in \cW} {\rm DG}(\bm v, \bm w) =  
+		\max_{\bm w \in \cW}  
+		\left(\boldsymbol{v} \otimes \boldsymbol{w}\right)^{\top} A \left(\boldsymbol{v} \otimes \boldsymbol{w}\right) + \boldsymbol{b}^{\top}\left(\boldsymbol{v} \otimes \boldsymbol{w}\right) + c,  
+		\end{align}  
+		where the matrix $ A $ of the quadratic term, the vector $ \bm b $ of the linear term, and the constant term $ c $ are respectively given as  
+		\begin{align*}  
+		A  
+		&=  
+		\frac{1}{2\lambda} \operatorname{diag}(\bm\alpha_{\bm 1_n, \bm 1_n}^* \otimes \boldsymbol{y})^{\top} K \operatorname{diag}(\bm\alpha_{\bm 1_n, \bm 1_n}^* \otimes \boldsymbol{y}),  
+		\\  
+		\bm b  
+		&=  
+		\left[\ell(y_i, f(\bm x_i; \bm \beta_{\bm 1_n, \bm 1_n}^*)) - {\alpha}_{\bm 1_n, \bm 1_n, i}^* \right]_{i \in [n]},  
+		\\  
+		c  
+		&=  
+		\frac{1}{2\lambda} (\bm 1_n \otimes \bm\alpha_{\bm 1_n, \bm 1_n}^* \otimes \boldsymbol{y})^{\top} K (\bm 1_n \otimes \bm\alpha_{\bm 1_n, \bm 1_n}^* \otimes \boldsymbol{y}).
+		\end{align*}
+    Here, $K \in \mathbb{R}^{n \times n}$ is a kernel matrix, where is defined as $K_{i,j} = \bm{\phi}(\bm{x}_i)^\top \bm{\phi}(\bm{x}_j)$.
+  \item
+  Finally, maximize an upper bound of weighted validation error with respect to the weight vector $\bm w^\prime$ for the validation dataset.
+  %
+  We can derive an upper bound of the worst-case weighted validation error, leading to \eqref{eq:zeta} and therefore \eqref{eq:main-bound}.
+\end{enumerate}
+
+
+\subsection{Greedy Coreset Selection Based on the Upper Bound}
+\label{subsec:GrCS}
+%
+The basic idea of the proposed DRCS method is to select the coreset vector $\bm v \in \{0, 1\}^n$ that minimizes the upper bound of the worst-case weighted validation error represented by \eqref{eq:main-bound}.
+%
+Since this is a combinatorial optimization problem, finding the global optimal solution within a realistic timeframe is challenging; thus, we adopt greedy approaches to obtain approximate solutions.
+%
+
+A naive greedy approach, referred to as {\tt greedy approach 1}, repeats the followings: we remove one training instance that minimizes \eqref{eq:main-bound}, and update $\bm w$ to maximize ${\rm DG}(\bm v, \bm w)$ in \eqref{eq:duality_gap} (Algorithm~\ref{alg:1}).
+%
+Although {\tt greedy approach 1} is sufficient for small datasets, the computational cost becomes prohibitively high for larger datasets.
+%
+The most significant computational cost in calculating the bound in \eqref{eq:main-bound} lies in the eigendecomposition of $A$ in \eqref{eq:maximum-gap}, required to determine ${\rm max}_{\bm w \in \cW}{\rm DG}(\bm v, \bm w)$, \red{which needs $O(n^3)$ time with a naive computation, or $O(n^2)$ if it is approximated}.
+%
+To circumvent this cost, another approach, referred to as {\tt greedy approach 2}, does not update $\bm w$ whenever an instance is removed, but instead fixes $\bm w$ optimized with initial $\bm v$ (i.e., $\bm v = \bm 1_n$) (Algorithm~\ref{alg:2}).
+%
+Then, it recalculates the values of ${\rm min}_{\bm v}\mathrm{WrVaEr}^{\mathrm{UB}}(\bm v)$ after the removal of each instance to dynamically update the selection process.
+%
+Moreover, as a much simpler approach, referred to as {\tt greedy approach 3}, determines the instances to be removed based solely on the initial values of ${\rm min}_{\bm v}\mathrm{WrVaEr}^{\mathrm{UB}}(\bm v)$ without recalculating them after each removal (Algorithm~\ref{alg:3}).
+%
+These greedy approaches are heuristics and do not guarantee optimality. However, in Section~\ref{sec:experiment}, we demonstrate that these approaches facilitate the selection of a coreset, effectively mitigating the increase in worst-case test error.
+
+\red{The time complexities of these algorithms are as follows (if eigendecomposition is not approximated), where $n^{\rm del}$ is the number of deletions:
+$O(n^4 n^{\rm del})$ for greedy approach 1,
+$O(n^3 n^{\rm del})$ for greedy approach 2, and
+$O(n^3 + n^{\rm del})$ for greedy approach 3.}
+%
+The details of these algorithm is given in {Appendix~\ref{app:algorithm}}. In this Appendix, we provide the pseudocode of them.

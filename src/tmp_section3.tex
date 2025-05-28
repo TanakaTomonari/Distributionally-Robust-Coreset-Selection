@@ -1,0 +1,176 @@
+% ------------------------------------------------------------------------------------------
+% sec3
+% ------------------------------------------------------------------------------------------
+\section{Proposed DRCS Method}
+\label{sec:method}
+%
+In this section, we present the proposed DRCS method that approximately solve the DRCS problem in \eqref{eq:DRCS-problem}.
+%
+As discussed in the previous section, our approach to approximately finding the optimal coreset vector $\bm{v}^*$ involves deriving an upper bound for \eqref{eq:main-bound} and selecting the coreset by greedily minimizing this upper bound.
+
+
+
+\subsection{Upper Bound for the Worst-case Test Error}
+\label{subsec:UB_WC}
+%
+In this subsection, we present our main result.
+
+\subsubsection{Main Theorem}
+%
+An upper bound of the worst-case weighted validation error, which can serve as the worst-case test error estimator, $ {\rm WrVaEr}(\bm v) $ in \eqref{eq:WrVaEr}, is presented in the following theorem. Our main result can be formulated as \eqref{eq:main-bound}.
+%
+\begin{theorem}
+ \label{theo:main}
+ {Assume that the primal objective function is $\mu$-strongly convex function with respect to $\bm \beta$.}
+ %
+ Let us denote the optimal primal and dual solutions for the entire training set (i.e., $v_i = 1 ~ \forall i \in [n]$) with uniform weights (i.e., $w_i = 1 ~ \forall i \in [n]$) as
+ \begin{align*}
+  \bm \beta^*_{\bm 1_n, \bm 1_n} = \argmin_{\bm \beta \in \RR^k} P_{\bm 1_n, \bm 1_n}(\bm \beta)
+ \end{align*}
+ and 
+ \begin{align*}
+  \bm \alpha^*_{\bm 1_n, \bm 1_n} = \argmin_{\bm \alpha \in \RR^n} D_{\bm 1_n, \bm 1_n}(\bm \alpha),
+ \end{align*}
+ respectively.
+ %
+ Then, an upper bound of the worst-case weighted validation error is written as 
+ \begin{align}
+  \label{eq:main-bound}
+  {\rm WrVaEr}(\bm v)
+  \le
+  {\rm WrVaEr}^{\rm UB}(\bm v)
+  =
+  1
+  -
+  \left(
+  \bm 1_{n^\prime}^\top \bm \zeta(\bm v)
+  -
+  Q
+  \sqrt{
+  \|\bm \zeta(\bm v)\|_2^2
+  -
+  \frac{
+  (\bm 1_{n^\prime}^\top \bm \zeta(\bm v))^2
+  }{
+  n^\prime
+  }
+  }
+  \right)
+  \frac{1}{n^\prime},
+ \end{align}
+ where
+ $\bm \zeta(\bm v) \in \{0, 1\}^{n^\prime}$
+ is an $n^\prime$-dimensional binary vector whose $i$-th element is defined as
+ \begin{align}
+  \label{eq:zeta}
+  \zeta_i(\bm v)
+  =
+  I\left\{
+  y_i^\prime \bm \beta_{\bm 1_n, \bm 1_n}^{*\top} \bm \phi(\bm x_i^\prime) - \|\bm \phi(\bm x_i^\prime)\|_2 \sqrt{\frac{2}{\lambda} \max_{\bm w \in \cW} {\rm DG}(\bm v, \bm w)} > 0
+  \right\}.
+ \end{align}
+ %
+ Here, ${\rm DG}$ is the duality gap for the problem with the coreset $\bm v$ and the weights $\bm w$ with respect to the primal and dual solutions $\bm \beta^*_{\bm 1_n, \bm 1_n}$ and $\bm \alpha^*_{\bm 1_n, \bm 1_n}$ for the training set, which is expressed as  
+\begin{align}
+ \label{eq:duality_gap}
+{\rm DG}(\bm v, \bm w) := P_{\bm v, \bm w}(\bm \beta^*_{\bm 1_n, \bm 1_n}) - D_{\bm v, \bm w}(\hat{\bm \alpha}_{\bm 1_n, \bm 1_n}^{*}),
+\end{align}
+where  
+\begin{align*}
+  \hat{\bm \alpha}_{\bm 1_n, \bm 1_n}^{*} = \{\bm \alpha^*_{\bm 1_n, \bm 1_n}\}_{v_i = 1}  
+\end{align*}
+is the $|\bm v|$-dimensional subvector extracted from the $n$-dimensional vector $\bm \alpha^*_{\bm 1_n, \bm 1_n}$, containing only the elements corresponding to indices where $v_i = 1$.
+%
+Furthermore, $ \max_{\bm w \in \cW} {\rm DG}(\bm v, \bm w) $  
+in \eqref{eq:zeta} can be analytically obtained by solving an eigenvalue problem that maximizes the following convex quadratic form:  
+\begin{align}  
+\label{eq:maximum-gap}  
+\max_{\bm w \in \cW} {\rm DG}(\bm v, \bm w) =  
+\max_{\bm w \in \cW}  
+\left(\boldsymbol{v} \otimes \boldsymbol{w}\right)^{\top} A \left(\boldsymbol{v} \otimes \boldsymbol{w}\right) + \boldsymbol{b}^{\top}\left(\boldsymbol{v} \otimes \boldsymbol{w}\right) + c,  
+\end{align}  
+where the matrix $ A $ of the quadratic term, the vector $ \bm b $ of the linear term, and the constant term $ c $ are respectively given as  
+\begin{align*}  
+A  
+&=  
+\frac{1}{2\lambda} \operatorname{diag}(\bm\alpha_{\bm 1_n, \bm 1_n}^* \otimes \boldsymbol{y})^{\top} K \operatorname{diag}(\bm\alpha_{\bm 1_n, \bm 1_n}^* \otimes \boldsymbol{y}),  
+\\  
+\bm b  
+&=  
+\left[\ell(y_i, \bm x_i; \bm \beta_{\bm 1_n, \bm 1_n}^*) - {\alpha}_{\bm 1_n, \bm 1_n, i}^* \right]_{i \in [n]},  
+\\  
+c  
+&=  
+\frac{1}{2\lambda} (\bm 1_n \otimes \bm\alpha_{\bm 1_n, \bm 1_n}^* \otimes \boldsymbol{y})^{\top} K (\bm 1_n \otimes \bm\alpha_{\bm 1_n, \bm 1_n}^* \otimes \boldsymbol{y}).  
+\end{align*}  
+
+\end{theorem}
+%
+In what follows, we sketch the proof of Theorem~\ref{theo:main}. The complete proof is given in {Appendix~\ref{app:main-proof}}.
+
+
+\subsubsection{Proof Sketch}
+
+The proof sketch of Theorem~\ref{theo:main} is primarily divided into the following steps.
+
+\begin{enumerate}
+  \item
+  First, as a premise, consider a model where $P_{\boldsymbol{w}}$ is $\mu$-strongly convex.
+  \item
+  Second, under assumption 1, derive the bound of model parameters. The model parameter vector ${\bm \beta}^*_{\bm v, \bm w}$, trained using the coreset vector $\bm v$ and weight vector $\bm w$, is guaranteed to converge within the range ${\cal B}^*_{\bm v, \bm w}$, which is represented by an L2-norm hypersphere \citep{10.1162/neco_a_01619}. 
+  %
+  A hypersphere of the radius is given by $R = \sqrt{\frac{2}{\lambda}{\rm DG}(\bm v, \bm w)}$, which is calculated in \eqref{eq:duality_gap}.
+  %
+  \item
+  Third, calculate a bound of the weighted validation error.
+  %
+  Using the hypersphere range ${\cal B}^*_{\bm v, \bm w}$, computed for a specific coreset vector $\bm v$ and weight vector $\bm w$, an upper bound of the weighted validation error can be analytically calculated.
+  %
+  This upper bound is determined by ${\rm DG}$. The larger ${\rm DG}$, the greater the upper bound becomes.
+  %
+  \item
+  Fourth, maximize ${\rm DG}$ with respect to the weight vector $\bm w$ for training dataset in \eqref{eq:maximum-gap}. We can obtain an upper bound of the worst-case weighted valdation error.
+  %
+  \item
+  Finally, maximize an upper bound of weighted validation error with respect to the weight vector $\bm w^\prime$ for the validation dataset.
+  %
+  We can derive an upper bound of the worst-case weighted validation error, leading to \eqref{eq:main-bound}.
+\end{enumerate}
+% 1. 前提条件:
+% Primal objective function $P_{\boldsymbol{w}}$が$\mu$-強凸性であるモデルを考える。
+
+% 2. モデルパラメータベクトルの存在範囲
+% コアセットベクトルvと重みベクトルwを用いて学習したモデルパラメータベクトル{\bm \beta}^*_{v,w}が、L2ノルムの超球で表される範囲$\mathcal{B}^*_{v,w}$に収束することが保証される\citep{hanada}ことを用いる。範囲$\mathcal{B}^*_{v,w}$の超球半径はR=\sqrt{\frac{2}{\lambda}DG}と表され、v, wについての関数である。
+
+% 2. validation errorの範囲
+% 特定のコアセットベクトルvと重みベクトルwに対して計算した超球範囲$\mathcal{B}^*_{v,w}$を用いて、validation errorのupper boundを解析的に計算することができる。この上限は、線形式の値によって定まるものである。すなわち超球半径Rが大きいほど、上限も大きくなる。
+
+% 3. 最悪のケースvalidation error
+% validation errorが最悪となることは、超球半径Rの最大化すなわち、DGの最大化と同義である。つまり、wについて最大化を行うことに帰着される。
+
+% 4. 検証データセットの重みベクトルw′が、検証データセットとテストデータセットの入力分布の密度比に基づいて適切に決定されるとする。このとき、式（8）の重み付き検証誤差VaErをw′について最大化すれば、validation errorの上界を定めることができ、式（13）を得る。
+
+% 以上により、最悪ケースのvalidation errorを計算できる。
+
+
+\subsection{Greedy Coreset Selection Based on the Upper Bound}
+\label{subsec:GrCS}
+%
+The basic idea of the proposed DRCS method is to select the coreset vector $\bm v \in \{0, 1\}^n$ that minimizes the upper bound of the worst-case weighted validation error represented by \eqref{eq:main-bound}.
+%
+Since this is a combinatorial optimization problem, finding the global optimal solution within a realistic timeframe is challenging; thus, we adopt greedy approaches to obtain approximate solutions.
+%
+
+A naive greedy approach involves removing the training instance that minimizes \eqref{eq:main-bound} one at a time (this approach is referred to as {\tt greedy approach 1}).
+%
+Although {\tt greedy approach 1} is sufficient for small datasets, the computational cost becomes prohibitively high for larger datasets.
+%
+The most significant computational cost in calculating the bound in \eqref{eq:main-bound} lies in the eigenvalue computation in \eqref{eq:maximum-gap}, required to determine ${\rm max}_{\bm w \in \cW}(\bm v, \bm w)$.
+%
+To circumvent this cost, another approach, referred to as {\tt greedy approach 2, greedy approach 3}, avoids recomputing the upper bound in \eqref{eq:main-bound} each time an instance is removed.
+%
+Instead, it selects multiple instances for removal without recomputing the upper bound.
+%
+These greedy approaches are heuristics and do not guarantee optimality. However, in Section~\ref{sec:experiment}, we demonstrate that these approaches facilitate the selection of a coreset, effectively mitigating the increase in worst-case test error.
+
+The details of these algorithm is given in {Appendix~\ref{app:algorithm}}. In this Appendix, we provide the pseudocode of them.

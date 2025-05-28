@@ -1,0 +1,232 @@
+
+\section{Problem Settings}
+\label{sec:problem-settings}
+%
+In this section, we formulate a distributionally robust coreset selection (DRCS) problem in the context of uncertain covariate-shift settings.
+
+\subsection{Preliminaries and Notations}
+%
+We consider a binary classification problem with the training dataset ${\mathcal D} := \{(\bm x_i, y_i)\}_{i \in [n]}$, where $n$ denotes the number of training instances, $\bm x_i \in \cX \subseteq {\mathbb R}^d$ represents the $i$-th feature vector defined on the input domain $\cX$, and $y_i \in \{\pm 1\}$ denotes the corresponding label for $i \in [n]$, with the notation $[n]$ indicating the set of natural numbers up to $n$.  
+%
+Similarly, let ${\mathcal D}^\prime := \{(\bm x_i^\prime, y_i^\prime)\}_{i \in [n^\prime]}$ be the validation dataset of size $n^\prime$, where each validation instance is assumed to follow the same distribution as the training instances.
+%
+For binary classification problems, we consider a classifier parameterized by a set of parameters $\bm \beta$, defined as  
+\begin{align}  
+\label{eq:classifier}  
+f(\cdot; \bm \beta): \mathbb{R}^d \ni \bm x \mapsto f(\bm x; \bm \beta) \in \mathbb{R},  
+\end{align}  
+where the binary label for an input vector $\bm x$ is predicted as $-1$ if $f(\bm x; \bm \beta) < 0$, and $+1$ otherwise.  
+%
+Furthermore, we denote the loss function for binary classification (e.g., binary cross-entropy or hinge loss) as
+\begin{align}
+ \label{eq:loss_func}
+ \ell: \{\pm 1\} \times \RR \ni (y, f(\bm x; \bm \beta)) \mapsto \ell(y, f(\bm x; \bm \beta)) \in \RR_+,
+\end{align}
+where $\RR_+$ indicates the set of nonnegative numbers~\footnote{
+%
+For example, in the case of the binary cross-entropy loss for a logistic regression model, it is expressed as  
+\begin{align*}  
+\ell(y, f(\bm x; \bm \beta)) = \log (1 + e^{-y f(\bm x; \bm \beta)}).  
+\end{align*}  
+%
+As another example, the hinge loss for a support vector machine (SVM) is expressed as  
+\begin{align*}  
+\ell(y, f(\bm x; \bm \beta)) = \max \{0, 1 - y f(\bm x; \bm \beta)\}.  
+\end{align*}  
+}.
+
+In this study, we investigate distributionally robust learning under an uncertain covariate shift setting, where the input distributions for the training/validation datasets and the test datasets differ, with the discrepancy between these distributions known to lie within a specified range.
+%
+In such a covariate-shift setting, it is well known that the difference in input distributions can be addressed through weighted learning.  
+%
+We denote the weight for the $i$-th training instance as $w_i > 0, i \in [n]$, and represent the $n$-dimensional vector of these weights as $\bm{w} \in [0, \infty)^n$.  
+%
+Typically, these weights are determined based on the ratio of the test input density to the training/validation input density~\citep{shimodaira2000improving, sugiyama2007covariate}.  
+%
+Therefore, a binary classification problem in a covariate-shift setting is generally formulated as a (regularized) weighted empirical risk minimization problem in the form of  
+\begin{align}  
+\label{eq:weighted_minimization}  
+\min_{\bm \beta} {\frac{1}{\sum_{i \in [n]} w_i}} \sum_{i \in [n]} w_i \ell(y_i, f(\bm x_i; \bm \beta)) + \rho(\bm \beta),  
+\end{align}  
+where $\rho(\bm \beta)$ denotes a regularization function.  
+
+In a conventional covariate-shift setting where the test input distribution is known, the weight vector $\bm{w}$ can be predetermined based on the density ratio, enabling the optimal model parameters to be obtained by directly solving the minimization problem in \eqref{eq:weighted_minimization}.
+%
+On the other hand, in the distributionally robust setting, the density ratio and hence the weight vector $\bm w$ are unknown.
+%
+In this study, we consider a distributionally robust learning scenario where the weight vector lies within a hypersphere of a certain radius $S$, centered around the uniform training data weights (i.e., $ \bm w = \bm{1}_n := [1, \ldots, 1]^\top $).
+%
+This distributionally robust learning problem is formulated as  
+\begin{align}  
+\max_{\bm{w} \in \cW} \min_{\bm{\beta}} {\frac{1}{\sum_{i \in [n]} w_i}} \sum_{i \in [n]} w_i \ell(y_i, f(\bm{x}_i; \bm{\beta})) + \rho(\bm{\beta}),  
+\end{align}  
+where  
+\begin{align}  
+\cW := \{\bm{w} \in \mathbb{R}^n \mid \| \bm{w} - \bm{1}_{n} \|_2 \le S\} \label{eq:weight-changes-distrib}
+\end{align}  
+represents the hypersphere within which the weight vector can exist~\footnote{  
+We assume $S \leq 1$, focusing on scenarios where the differences between the training and test input distributions are not substantial.  
+}.  
+
+
+\subsection{Applicable Class of Problems by the Proposed Method} \label{sec:applicable-class}
+%
+Before presenting the proposed method, we define the class of classification problems to which the DRCS method applies.
+%
+The proposed DRCS method is applicable when the classifier in \eqref{eq:classifier}, the loss function in \eqref{eq:loss_func}, and the regularization function in \eqref{eq:weighted_minimization} satisfy certain conditions.
+%
+As a class of applicable classifiers, we focus on the basis function model in the form of
+\begin{align}
+ \label{eq:basis_expansion}
+ f(\bm{x}; \bm{\beta}) = \sum_{j\in [k]} \beta_j \phi_j(\bm{x}) = \bm{\beta}^\top \bm{\phi}(\bm{x}),
+\end{align}
+
+where $\phi_j: \mathbb{R}^d \ni \bm{x} \mapsto \phi_j(\bm{x}) \in \mathbb{R}, j \in [k]$ is the $j$-th basis function, $k$ is the number of basis functions, and $\bm{\phi}(\bm{x}) \in \mathbb{R}^k$ is the $k$-dimensional vector that gathers the $k$ basis functions.
+%
+Furthermore, the loss function $\ell(y, f(\bm{x}; \bm{\beta}))$ is assumed to be convex with respect to its second argument, and the regularization function $\rho(\bm{\beta})$ must also be convex with respect to $\bm{\beta}$.
+
+While these conditions may seem restrictive, kernelization is achievable by considering the dual form of the basis function model in \eqref{eq:basis_expansion}, enabling extensions to popular nonlinear classifiers such as nonlinear logistic regression and kernel support vector machines.  
+%
+When applying the proposed method to deep learning models, tools such as Neural Tangent Kernel (NTK)~\citep{neuraltangents2020} and Neural Network Gaussian Processes (NNGP)~\citep{lee2017deep} can be utilized.
+%
+These tools bridge traditional kernel methods with deep learning, offering both theoretical insights and practical tools for tackling high-dimensional and complex learning problems.  
+%
+Furthermore, in practical DRCS problems, since the training and test data are typically assumed to share a certain degree of similarity, a fine-tuning approach that updates part of the model parameters during testing is beneficial.  
+%
+The proposed method is applicable in such scenarios and serves as a valuable tool for coreset selection in deep learning models as well.
+% %
+% See Section~\ref{xxx} for more details on applying the proposed method to deep learning models.
+
+
+
+
+
+
+
+
+% ========= 2.3 =========
+
+\subsection{Distributionally Robust Coreset Selection (DRCS) Problems}
+%
+To formulate the coreset selection problem, let us introduce an $ n $-dimensional binary vector $ \bm v \in \{0, 1\}^n $, where $ v_i = 1 $ indicates that the $ i $-th training instance is included in the coreset, while $ v_i = 0 $ indicates that the $ i $-th training instance is excluded.  
+%
+Hereafter, we refer to $ \bm v $ as the \emph{coreset vector}.  
+%
+Let us write the training error of our DRCS problem as
+\begin{align}
+\label{eq:primal}
+P_{\bm v, \bm w}(\bm \beta)
+:=
+\frac{1}{\sum_{i \in [n]} v_i w_i}
+\sum_{i \in [n]}
+v_i
+w_i
+\ell
+\left(
+y_i, f(\bm x_i; \bm \beta)
+\right)
++
+\rho(\bm \beta). 
+\end{align}
+%
+Given a coreset vector $\bm v \in \{0, 1\}^n$ and a weight vector $\bm w \in \cW$, the classifier's optimal model parameter vector is written as
+\begin{align}
+ \label{eq:beta-star}
+ \bm \beta^*(\bm v, \bm w)
+ :=
+ \argmin_{\bm \beta}
+ P_{\bm v, \bm w}(\bm \beta).
+\end{align}
+
+Given a weight vector $\bm{w}^\prime \in \mathbb{R}^{n^\prime}$ for validation dataset, let us consider the weighted validation error for the optimal model parameter vector in \eqref{eq:beta-star} can be defined as  
+\begin{align}
+\label{eq:VaEr}
+{\rm VaEr}(\bm{v}, \bm{w}^\prime) 
+:= 
+\frac{1}{\sum_{i \in [n^\prime]} w_i^\prime} 
+\sum_{i \in [n^\prime]} 
+w_i^\prime 
+I 
+\left\{ 
+y_i^\prime \neq {\rm sgn}(f(\bm{x}_i^\prime; \bm{\beta}^*(\bm{v}, \bm{w}))) 
+\right\},
+\end{align}
+where  
+\begin{align}  
+\cW^\prime := \{\bm{w}^\prime \in \mathbb{R}^{n^\prime} \mid \| \bm{w}^\prime - \bm{1}_{n^\prime} \|_2 \le Q\}  
+\end{align}  
+represents the hypersphere of a certain radius $Q$ within which the weight vector can exist.
+%
+Here, $I\{\cdot\}$ is the indicator function that returns $1$ if the argument is true and $0$ otherwise, and ${\rm sgn}: \RR \to \{\pm 1\}$ is the sign function that returns the sign of the given scalar input. 
+%
+If the weight vector $\bm w^\prime$ for the validation dataset is appropriately determined based on the density ratio of the input distributions of the validation and the test datasets, the weighted validation error ${\rm VaEr}$ in \eqref{eq:VaEr} can be used as a test error estimator.
+
+In a distributionally robust setting where the weight vector is uncertain, minimizing the worst-case test error is necessary.  
+%
+As an estimator of the worst-case test error, it is reasonable to use the worst-case weighted validation error (WrVaEr) in \eqref{eq:VaEr}, expressed as  
+\begin{align}
+\label{eq:WrVaEr}
+{\rm WrVaEr}(\bm{v}) 
+= 
+\max_{\bm{w} \in \red{\cW^\prime}}
+{\rm VaEr}(\bm{v}, \bm{w}).
+\end{align}
+%
+Based on the above discussion, the goal of the DRCS problem is formulated as the problem of finding the coreset vector $\bm v \in \{0, 1\}^n$ that minimizes the worst-case weighted validation error in \eqref{eq:WrVaEr}.
+%
+Let
+$m < n$
+be the size of the coreset, i.e., the number of remaining training instances after coreset selection.
+%
+Then, the DRCS problem we consider is formulated as 
+\begin{align}
+\label{eq:DRCS-problem}
+\bm{v}^* = \argmin_{\bm{v}} {\rm WrVaEr}(\bm{v})
+ ~
+\text{ subject to } \|\bm{v}\|_1 = m.
+\end{align}
+
+By summarizing equations \ref{eq:beta-star}, \ref{eq:VaEr}, \ref{eq:WrVaEr} and \ref{eq:DRCS-problem}, minimizing the worst-case weighted validation error (WrVaEr) can be expressed as:
+\begin{equation} \label{eq:obj-acc-lb}
+  \min_{\bm v} \max_{\bm w} \min_{\bm \beta} {\rm VaEr}(\bm{v}, \bm{w}, \bm{\beta}).
+\end{equation}
+
+Unfortunately, the problem in \eqref{eq:DRCS-problem} is highly challenging.  
+%
+First, it involves trilevel optimization over three types of vectors: $ \bm{v} $, $ \bm{w} $, and $ \bm{\beta} $.
+%
+Trilevel optimization is technically complex as it requires solving nested optimization problems across three hierarchical levels, involving a large number of variables and significantly increasing computational complexity, along with the difficulty of ensuring convergence and global optimality.  
+%
+Moreover, the third-level optimization for $ \bm{v} \in \{0, 1\}^n $ is a combinatorial optimization problem, which becomes infeasible to solve optimally when $ n $ is large.  
+%
+To address these technical challenges, our approach involves the following two steps:  
+\begin{itemize}  
+ \item [(i)] Deriving an upper bound for the worst-case weighted validation error in \eqref{eq:WrVaEr}.  
+ \item [(ii)] Greedily identifying a coreset that minimizes this upper bound of worst-case weighted validation error.
+\end{itemize}
+%
+In the next section, we describe methods for (i) and (ii) in Section~\ref{subsec:UB_WC} and Section~\ref{subsec:GrCS}, respectively.  
+
+
+% ========= 2.4 =========
+\subsection{A Working Example: $L_2$-regularized Logistic Regression}
+%
+As a working example of such a classification problem, let us consider $L_2$-regularized logistic regression of basis function models, i.e., we consider a basis function model in \eqref{eq:basis_expansion}, binary cross-entropy as the loss function $\ell(y, f(\bm x; \bm \beta))$ and $L_2$ regularization function as the regularization function $\rho(\bm \beta)$.
+%
+Considering the coreset vector $\bm v$, the optimization problem for $L_2$-regularized logistic regression is defined as  
+\begin{align}
+\bm \beta_{\bm v, \bm w}^* = \argmin_{\bm \beta \in \mathbb{R}^k} P_{\bm v, \bm w}(\bm \beta),
+\end{align}
+where  
+\begin{align}
+% \label{eq:primal}
+P_{\bm v, \bm w}(\bm \beta)
+=
+\frac{1}{\sum_{i \in [n]} v_i w_i}
+\sum_{i \in [n]}
+v_i w_i
+\log (1 + e^{-y_i f(\bm x_i; \bm \beta)})
++
+\frac{\lambda}{2} \|\bm \beta\|_2^2, 
+\end{align}
+which is referred to as the \emph{primal problem} and $P_{\bm v, \bm w}(\bm \beta)$ is called \emph{primal objective function}.

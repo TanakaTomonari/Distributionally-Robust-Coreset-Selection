@@ -1,0 +1,494 @@
+\section{Proofs and additional discussions of Section~\ref{sec:method}}
+
+
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
+\subsection{Proof of Theorem \ref{theo:main}} \label{app:main-proof}
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
+
+In this appendix, we provide the complete proof of theorem \ref{theo:main}.
+
+
+\begin{theorem}
+	{Assume that $\rho$ in the primal objective function $P_{\bm 1_n, \bm 1_n}$ is $\mu$-strongly convex with respect to $\bm \beta$.}
+	%
+	Let us denote the optimal primal and dual solutions for the entire training set (i.e., $v_i = 1 ~ \forall i \in [n]$) with uniform weights (i.e., $w_i = 1 ~ \forall i \in [n]$) as
+	\begin{align*}
+	 \bm \beta^*_{\bm 1_n, \bm 1_n} = \argmin_{\bm \beta \in \RR^k} P_{\bm 1_n, \bm 1_n}(\bm \beta)
+	 \quad\text{and}\quad
+	 \bm \alpha^*_{\bm 1_n, \bm 1_n} = \argmax_{\bm \alpha \in \RR^n} D_{\bm 1_n, \bm 1_n}(\bm \alpha),
+	\end{align*}
+	respectively.
+	%
+	Then, an upper bound of the worst-case weighted validation error is written as 
+	\begin{align}
+	%  \label{eq:main-bound}
+	 {\rm WrVaEr}(\bm v)
+	 \le
+	 {\rm WrVaEr}^{\rm UB}(\bm v)
+	 =
+	 1
+	 -
+	 \left(
+	 \bm 1_{n^\prime}^\top \bm \zeta(\bm v)
+	 -
+	 Q
+	 \sqrt{
+	 \|\bm \zeta(\bm v)\|_2^2
+	 -
+	 \frac{
+	 (\bm 1_{n^\prime}^\top \bm \zeta(\bm v))^2
+	 }{
+	 n^\prime
+	 }
+	 }
+	 \right)
+	 \frac{1}{n^\prime},
+	 \tag{(\ref{eq:main-bound}) restated}
+	\end{align}
+	where,
+	\begin{align}
+	%  \label{eq:zeta}
+	 & \bm \zeta(\bm v) \in \{0, 1\}^{n^\prime};
+	 \quad
+	 \zeta_i(\bm v)
+	 =
+	 I\left\{
+	 y_i^\prime \bm \beta_{\bm 1_n, \bm 1_n}^{*\top} \bm \phi(\bm x_i^\prime) - \|\bm \phi(\bm x_i^\prime)\|_2 \sqrt{\frac{2}{\lambda} \max_{\bm w \in \cW} {\rm DG}(\bm v, \bm w)} > 0
+	 \right\},
+	 \tag{(\ref{eq:zeta}) restated}\\
+	%
+	% \label{eq:duality_gap}
+	& {\rm DG}(\bm v, \bm w) := P_{\bm v, \bm w}(\bm \beta^*_{\bm 1_n, \bm 1_n}) - D_{\bm v, \bm w}({\bm \alpha}_{\bm 1_n, \bm 1_n}^{*}).
+	\tag{(\ref{eq:duality_gap}) restated}
+ \end{align}
+ Here, the quantity ${\rm DG}$ is called the {\em duality gap} and it plays a main role of the upper bound of the validation error.
+ 
+ Especially, if we use L2-regularization $\rho(\beta) := \frac{\lambda}{2}\|\bm\beta\|_2^2$, ${\rm DG}(\bm v, \bm w)$, the maximization $\max_{\bm w \in \cW} {\rm DG}(\bm v, \bm w)$ can be algorithmically computed.
+ \end{theorem}
+
+ This can be proved as follows.
+
+ First, we derive the bound of model parameters.
+
+\begin{lemma}
+Without loss of generality, we assume that the last ($n^{\mathrm{old}} - n^{\mathrm{new}}$) instances are removed ($n^{\mathrm{new}} < n^{\mathrm{old}}$, and $\bm{x}_{i:}^{\mathrm{old}} = \bm{x}_{i:}^{\mathrm{new}} \quad \forall i \in [n^{\mathrm{new}}]$). Let $P_{\boldsymbol{w}}$ be $\mu$-strongly convex, and suppose $\bm \beta_{\bm 1_n, \bm 1_n}^{*} \in \RR^{k}$ and $\bm \alpha_{\bm 1_n, \bm 1_n}^{*} \in \mathbb{R}^n$ are given.
+%
+Then, we can assure that the following ${\cal B}_{\bm{v}, \bm{w}} \subset \RR^k$ must satisfy $\bm \beta_{\bm v, \bm w}^{*} \in {\cal B}_{\bm{v}, \bm{w}}$:
+\begin{equation}
+	\label{eq:bound}
+	\begin{aligned}
+		{\cal B}_{\bm{v}, \bm{w}} :=\left\{\bm{\beta} \in \RR^k \mid\|\bm{\beta}-\bm \beta_{\bm 1_n, \bm 1_n}^{*}\|_2 \leq R := \sqrt{\frac{2}{\lambda}{\rm DG}(\bm v, \bm w)} \right\}.
+	\end{aligned}
+\end{equation}
+% ###########################################################
+% ###########################################################
+% ###########################################################
+% ###########################################################
+% \begin{equation}
+% 	\label{eq:duality_gap}
+% 	\begin{aligned}
+% 		\text{where} \quad {\rm DG}(\bm v, \bm w)
+% 		& := P_{\bm v, \bm w}(\bm \beta^*_{\bm 1_n, \bm 1_n}) - D_{\bm v, \bm w}(\hat{\bm \alpha}_{\bm 1_n, \bm 1_n}^{*}) \\
+% 		& = {\sum_{i=1}^{n^{\mathrm{new}}}w_i\left[ \max \left\{0,1-y_i \phi(\bm{x}_{i}) \bm \beta_{\bm 1_n, \bm 1_n}^{*}\right\}-\alpha_{\bm 1_n, \bm 1_n, i}^{*}\right]} \\
+% 		& + \frac{1}{2 \lambda} \sum_{i=1}^{n^{\mathrm {old}}} \sum_{j=1}^{n^{\mathrm {old}}} 1_{n, i} 1_{n, j} \alpha_{\bm 1_n, \bm 1_n, i}^{*} \alpha_{\bm 1_n, \bm 1_n, j}^{*} y_i y_j K(\bm{x}_{i}, \bm{x}_{j})
+% 		{+ \frac{1}{2 \lambda} \sum_{i=1}^{n^{\mathrm{new}}} \sum_{j=1}^{n^{\mathrm{new}}} w_i w_j \alpha_{\bm 1_n, \bm 1_n, i}^{*} \alpha_{\bm 1_n, \bm 1_n, j}^{*} y_i y_j K(\bm{x}_{i}, \bm{x}_{j})}.
+% 	\end{aligned}
+% \end{equation}
+% ###########################################################
+% ###########################################################
+% ###########################################################
+% ###########################################################
+\end{lemma}
+
+\begin{proof}
+	See Section 4.2.1 of \citep{10.1162/neco_a_01619}
+\end{proof}
+%
+Here, ${\rm DG}$ takes various values depending on the possible weights $\bm w$ and coreset vector $\bm v$.
+%
+
+Next, we calculate a bound of the weighted validation error using ${\cal B}_{\bm{v}, \bm{w}}$.
+\begin{theorem} \label{thm:acc-lb}
+	% 再学習時のテスト重み付き正解率${\rm VaEr}$のboundは、再学習時のパラメータの存在範囲${\cal B}_{\bm{v}, \bm{w}} \subset \RR^k$, where $\bm{\beta}_{\bm v, \bm w} \in \mathcal{B}^{*(\boldsymbol{w})}$を用いて、以下によって導出される:
+	The range of the weighted validation error is derived using the bound of model parameters after retraining, ${\cal B}_{\bm{v}, \bm{w}} \subset \RR^k$, where $\bm{\beta}_{\bm v, \bm w} ^{*} \in {\cal B}_{\bm{v}, \bm{w}}$, as follows:
+	\begin{align}
+		\displaystyle\frac{n_{\rm surelyincorrect}^{(\bm w')}}{\displaystyle \sum_{i \in\left[n^ \prime \right]} w_i'} & \leq {\rm VaEr} \leq \frac{n_{\rm surelyincorrect}^{(\bm w')} + {n_\mathrm{unknown}^{(\bm w')}}}{\displaystyle \sum_{i \in\left[n^ \prime \right]} w_i'} = \frac{n^\prime - {n_{\rm surelycorrect}^{(\bm w')}}}{\displaystyle \sum_{i \in\left[n^ \prime \right]} w_i'}, \label{eq:error-bound}\\
+		\text{where} \quad n_{\rm surelycorrect}^{(\bm w')} & = \sum_{i \in\left[n^ \prime \right]} w_i' I\left[\min_{\bm{\beta} \in {\cal B}_{\bm{v}, \bm{w}}} y_i^{\prime} \bm{\beta}^\top \bm\phi(\bm x^{\prime}_{i}) > 0\right], \label{eq:correct-bound}\\
+		n_{\rm surelyincorrect}^{(\bm w')} & = \sum_{i \in\left[n^ \prime \right]} w_i' I\left[\max_{\bm{\beta} \in {\cal B}_{\bm{v}, \bm{w}}} y_i^{\prime} \bm{\beta}^\top \bm\phi(\bm x^{\prime}_{i}) < 0\right], \label{eq:incorrect-bound}\\
+		n_\mathrm{unknown}^{(\bm w')} & = \sum_{i \in\left[n^ \prime \right]} w_i' I\left[\min_{\bm{\beta} \in {\cal B}_{\bm{v}, \bm{w}}} y_i^{\prime} \bm{\beta}^\top \bm\phi(\bm x^{\prime}_{i}) < 0, \quad \max_{\bm{\beta} \in {\cal B}_{\bm{v}, \bm{w}}} y_i^{\prime} \bm{\beta}^\top \bm\phi(\bm x^{\prime}_{i}) > 0\right], \label{eq:unknown-bound}\\
+		n^\prime & = n_{\rm surelycorrect}^{(\bm w')} + n_{\rm surelyincorrect}^{(\bm w')} + n_{\rm unknown}^{(\bm w')} =
+		%\sum_{i \in\left[n^ \prime \right]} w_i'.
+		\red{\bm 1_{n ^\prime}^\top \bm w'}.
+		\label{eq:n-all}
+	\end{align}
+\end{theorem}
+%
+Here, \eqref{eq:incorrect-bound} indicates that if the bound of model parameters after retraining is known, some of the test instances can be predicted.
+%
+% また、\eqref{eq:unknown-bound}は存在範囲だけでは、分類の正誤が不明であることを示している。
+%
+Moreover, \eqref{eq:unknown-bound} indicates that knowing only the bound of model parameters is insufficient to determine the correctness of classification.
+%
+% \eqref{eq:error-bound}の解釈は次のとおりである。
+%
+The interpretation of \eqref{eq:error-bound} is as follows.
+%
+If $n_\mathrm{unknown}^{(\bm w')}$ is assumed to be entirely misclassified, the validation error reaches its maximum possible value, resulting in the rightmost side of the inequality. Conversely, if all are assumed to be correctly classified, the validation error reaches its minimum possible value, resulting in the leftmost side of the inequality.
+%
+% すなわち、再学習時の重み付き正解率の範囲を\eqref{eq:error-bound}で示すことができる。
+%
+That is, the range of the worst-case test accuracy after retraining can be expressed as \eqref{eq:error-bound}.
+%
+
+%
+% 初めに、${\cal B}_{\bm{v}, \bm{w}}$を用いて、\eqref{eq:incorrect-bound}, \eqref{eq:unknown-bound}の分類に必要な、線形スコア$y_i^{\prime} \bm{\beta}^\top \bm\phi(\bm x^{\prime}_{i})$の上限と下限の計算方法について述べる。
+%
+Next, using ${\cal B}_{\bm{v}, \bm{w}}$, we describe the method for computing an upper and lower bounds of the linear score $y_i^{\prime} \bm{\beta}^\top \bm\phi(\bm x^{\prime}_{i})$, which is necessary for the classification in \eqref{eq:incorrect-bound} and \eqref{eq:unknown-bound}.
+%
+% 一般に、${\cal B}_{\bm{v}, \bm{w}}$が超球で表される場合は、これらを明示的に得ることが可能である。
+%
+In general, when ${\cal B}_{\bm{v}, \bm{w}}$ is represented as a hypersphere, these bounds can be explicitly obtained.
+%
+\begin{lemma}\label{lem:linear_score}
+	If ${\cal B}_{\bm{v}, \bm{w}}$ is given as a hypersphere of radius $R \in \mathbb{R}_{\geq0}$ centered at the original model parameter $\bm{\beta}_{\bm 1_n, \bm 1_n}^*$,
+	$\left({\cal B}_{\bm{v}, \bm{w}} :=\left\{\bm\beta \in \RR^k \mid\|\bm\beta-\bm{\beta}_{\bm{1}_n, \bm{1}_n}^{*}\|_2 \leq R\right\}\right)$, an upper and lower bounds of the linear score $y_i^{\prime} \bm \beta^\top \bm x^{\prime}_i$ can be analytically calculated as
+	% For $y_i^{\prime}\in\{-1, +1\}$, $\bm x^{\prime}_i \in \RR^k, \bm{\beta}_{\bm 1_n, \bm 1_n}^* \in \RR^k$ and $R > 0$,
+	\begin{align}
+		& \min_{\bm{\beta} \in {\cal B}_{\bm{v}, \bm{w}}} y_i^{\prime}\bm{\beta}^\top \bm\phi(\bm x^{\prime}_i) = y_i^{\prime}\bm{\beta}_{\bm 1_n, \bm 1_n}^{*\top} \bm\phi(\bm x^{\prime}_i) -\|y_i^{\prime}\bm\phi(\bm x^{\prime}_i)\|_2 R, \label{eq:linear_score_min}\\
+		& \max_{\bm{\beta} \in {\cal B}_{\bm{v}, \bm{w}}} y_i^{\prime}\bm{\beta}^\top \bm\phi(\bm x^{\prime}_i) = y_i^{\prime}\bm{\beta}_{\bm 1_n, \bm 1_n}^{*\top} \bm\phi(\bm x^{\prime}_i) + \|y_i^{\prime}\bm\phi(\bm x^{\prime}_i)\|_2 R.\label{eq:linear_score_max}
+	\end{align}
+\end{lemma}
+%
+The proof is shown in Lemma~\ref{lem:optimize-linear}.
+%
+% この\eqref{eq:linear_score_min}, \eqref{eq:linear_score_max}は線形スコア$y_i^{\prime}\bm{\beta}^\top \bm\phi(\bm x^{\prime}_{i})$の上限と下限が$R$に依存する値であることを示している。
+%
+In \eqref{eq:linear_score_min} and \eqref{eq:linear_score_max}, these show that an upper and lower bounds of the linear score $y_i^{\prime}\bm{\beta}^\top \bm\phi(\bm x^{\prime}_{i})$ depend on the value of $R$.
+%
+% $R$が大きいほど下限は負の値を取りやすく、上限は正の値を取りやすくなる。
+%
+As $R$ increases, a lower bound is more likely to take negative values, while an upper bound is more likely to take positive values.
+%
+
+
+%
+\begin{corollary} \label{cor:R-lb}
+	% 再学習時のモデルパラメータの存在範囲${\cal B}_{\bm{v}, \bm{w}} \subset \RR^k$が特に、L2ノルムの超球半径$R$で表現される場合、\eqref{eq:error-bound}で示した再学習時の正解率の下限を最大にすることは、$R$を最小化することと同値である。
+	If the bound of model parameters after retraining, ${\cal B}_{\bm{v}, \bm{w}} \subset \RR^k$, is specifically represented as a hypersphere with an L2 norm radius $R$, maximizing an upper bound of the worst-case weighted validation error, as shown in \eqref{eq:error-bound}, is equivalent to maximizing $R$.
+\end{corollary}
+
+	% 最後に、最も正解率が悪くなる場合を考慮し、テスト事例に付与する重み$\bm w'$の最適化を行う。
+	%
+	Finally, considering the worst-case weighted validation error, the optimization of the weights $\bm w'$ assigned to the validation instances is performed.
+	%
+	\begin{lemma} \label{lem:validation-weight-max}
+		% テスト重み$\bm w'$の変動範囲がL2ノルムの超球$\mathcal{W}':=\left\{\boldsymbol{w}' \mid\|\boldsymbol{w}'-\bm 1\|_2 \leq Q\right\}(Q>0)$であり、かつ、重みの総和が一定であると仮定する。このとき、テスト重みによる、最も正解率の下限を小さくする最小化問題は以下のように定式化でき、:
+		Assume that the range of validation weights $\bm w'$ is an L2-norm hypersphere, defined as $\mathcal{W}':=\left\{\boldsymbol{w}' \mid \|\boldsymbol{w}'- \bm 1_{n ^\prime}\|_2 \leq Q\right\}$ $(Q>0)$, and that the sum of the weights is constant. In this case, the maximization problem for the validation weights that results in an upper bound of the weighted validation error can be formulated as follows:
+		\begin{align}
+			\label{eq:validation-weight-opt}
+			\displaystyle \max_{\bm w' \in \cal W'} \frac{n^\prime - {n_{\rm surelycorrect}^{(\bm w')}}}{\displaystyle \sum_{i \in\left[n^ \prime \right]} w_i'}, \quad
+			& \text{where} \quad n_{\rm surelycorrect}^{(\bm w')} = \bm\zeta(\bm v, \bm w)^\top \bm w', \quad \zeta_i = I\left[\min_{\bm{\beta} \in {\cal B}_{\bm{v}, \bm{w}}} y_i^{\prime}\bm{\beta}^\top \bm\phi(\bm x^{\prime}_{i}) > 0\right], \\
+			& \text{subject to} \quad \|\bm w - \bm 1_{n ^\prime}\|_2 \leq Q, \quad {\displaystyle \sum_{i \in\left[n^ \prime \right]} w_i'} = n^\prime,
+		\end{align}
+		% この問題の最小化は解析的に以下のように計算される:
+		and the maximization of this problem can be analytically computed as follows:
+		\begin{align}
+			\displaystyle \max_{\bm w' \in \cal W'} \frac{n^\prime - {n_{\rm surelycorrect}^{(\bm w')}}}{\displaystyle \sum_{i \in\left[n^ \prime \right]} w_i'} = 1 - \left(\bm 1_{n^\prime}^{\top} \bm \zeta(\bm v, \bm w) -Q \sqrt{\|\bm \zeta(\bm v, \bm w)\|_2^2-\frac{\left(\bm 1_{n ^\prime}^{\top} \bm \zeta(\bm v, \bm w) \right)^2}{n^\prime}}\right) \frac{1}{n^\prime}.
+		\end{align}
+	\end{lemma}
+	%
+	The proof is shown in Appendix~\ref{app:validation-weight-max}.
+	%
+	Here, $\bm \zeta$ is a function of $\bm v$ and $\bm w$.
+	%
+	From \eqref{eq:linear_score_min} and \eqref{eq:validation-weight-opt}, maximizing $R$ with respect to $\bm w$ allows us to maximize an upper bound of the worst-case weighted validation error. This is expressed as
+	\begin{gather}
+		% \label{eq:zeta}
+		\zeta_i(\bm v)
+		=
+		I\left\{
+		y_i^\prime \bm \beta_{\bm 1_n, \bm 1_n}^{*\top} \bm \phi(\bm x_i^\prime) - \|\bm \phi(\bm x_i^\prime)\|_2 R > 0
+		\right\}, \\
+		\text{where } R = \sqrt{\frac{2}{\lambda} \max_{\bm w \in \cW} {\rm DG}(\bm v, \bm w)}.
+	 \end{gather}
+	% これによって、目的である、正解率の下限（LB）を導出することができる。
+	%
+	Therefore, an upper bound of the worst-case weighted validation error is written as
+
+	\begin{align}
+		{\rm WrVaEr}(\bm v)
+		\le
+		1
+		-
+		\left(
+		\bm 1_{n^\prime}^\top \bm \zeta(\bm v)
+		-
+		Q
+		\sqrt{
+		\|\bm \zeta(\bm v)\|_2^2
+		-
+		\frac{
+		\left(\bm 1_{n^\prime}^\top \bm \zeta(\bm v)\right)^2
+		}{
+		n^\prime
+		}
+		}
+		\right)
+		\frac{1}{n^\prime}
+		\end{align}
+
+	%
+	% これは、再学習時の正解率の下限を理論的に保証することを意味している。
+	%
+	This implies a theoretical guarantee for an upper bound of the worst-case test error after retraining.
+
+
+
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % %
+\subsection{Proof of Lemma \ref{lem:validation-weight-max}} \label{app:validation-weight-max}
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % %
+
+In this appendix, we provide the proof of a following constrained maximization problem:
+\begin{gather}
+	\displaystyle \max_{\bm w' \in \cal W'} \frac{n^\prime - {n_{\rm surelycorrect}^{(\bm w')}}}{\displaystyle \sum_{i \in\left[n^ \prime \right]} w_i'}, \quad \text{subject to } \left\|\bm w'- \bm 1_{n ^\prime} \right\|_2 = Q, \quad \bm 1_{n ^\prime}^\top \bm w' = n ^\prime, \\
+	\text{where} \quad n_{\rm surelycorrect}^{(\bm w')} = \bm \zeta^\top \bm w'
+\end{gather}
+Then, this problem can be transformed and rewritten as follows:
+\begin{align}
+	\label{eq:linear-score-sum}
+	\displaystyle \max_{\bm w' \in \cal W'} \frac{n^\prime - {n_{\rm surelycorrect}^{(\bm w')}}}{\displaystyle \sum_{i \in\left[n^ \prime \right]} w_i'}
+	= 1 - \frac{\min_{\bm w' \in {\cal W'}} \bm \zeta^\top \bm w'}{n ^\prime}.
+\end{align}
+Thus, we prove that this minimization problem can be solved analytically.
+
+\begin{proof}
+	First, we write the Lagrangian function with Lagrange multiplier $\mu, \nu \in \RR$ as:
+	\begin{equation}
+		L(\bm w', \mu, \nu) = \bm\zeta^\top \bm w' + \mu\left(\left\|\bm w'- \bm 1_{n ^\prime} \right\|_2^2 - Q^2\right) + \nu\left(\bm 1_{n ^\prime}^\top \bm w' - n^\prime\right).
+	\end{equation}
+	Then, due to the property of Lagrange multiplier, the stationary points of \eqref{eq:linear-score-sum} are obtained as
+	\begin{gather}
+		\frac{\partial L(\bm w', \mu, \nu)}{\partial \bm w'} = \bm\zeta + 2\mu\left(\bm w'- \bm 1_{n ^\prime} \right) + \nu\bm 1_{n ^\prime} = 0, \label{eq:0}\\
+		2\mu\left(\bm w'- \bm 1_{n ^\prime} \right) = - \bm\zeta - \nu\bm 1_{n ^\prime} \label{eq:1}.
+	\end{gather}
+	Squaring both sides of \eqref{eq:1}, we get:
+	\begin{equation}
+		\label{eq:2}
+		4\mu^2\left\|\bm w'- \bm 1_{n ^\prime} \right\|_2^2 = \left\|\bm\zeta\right\|_2^2 + 2\nu \bm\zeta^\top \bm 1_{n ^\prime} + \nu^2 n ^\prime.
+	\end{equation}
+	Multiplying both sides of \eqref{eq:1} by $\bm{1}_{n^\prime}^\top$, we obtain:
+	\begin{align}
+		2\mu\left(\bm 1_{n ^\prime}^\top \bm w'- n^\prime\right) & = - \bm 1_{n ^\prime}^\top \bm\zeta - \nu \bm 1_{n ^\prime}^\top \bm 1_{n ^\prime}, \nonumber\\
+		0 & =  - \bm 1_{n ^\prime}^\top \bm\zeta - \nu n ^\prime, \nonumber\\
+		\therefore \nu & = -\frac{\bm 1_{n ^\prime}^\top \bm\zeta}{n ^\prime}. \label{eq:3}
+	\end{align}
+	Substituting \eqref{eq:3} into \eqref{eq:2}, we obtain:
+	\begin{align}
+		4\mu^2\left\|\bm w'- \bm 1_{n ^\prime} \right\|_2^2 & = \left\|\bm\zeta\right\|_2^2 - \frac{2}{n ^\prime} \left(\bm 1_{n ^\prime}^\top \bm\zeta\right)^2 + \left(-\frac{\bm 1_{n ^\prime}^\top \bm\zeta}{n ^\prime}\right)^2 n ^\prime, \nonumber\\
+		4\mu^2\left\|\bm w'- \bm 1_{n ^\prime} \right\|_2^2 & = \left\|\bm\zeta\right\|_2^2 - \frac{\left(\bm 1_{n ^\prime}^\top \bm\zeta\right)^2}{n ^\prime}, \nonumber\\
+		2\mu & = \pm \frac{1}{Q}\sqrt{\left\|\bm\zeta\right\|_2^2 - \frac{\left(\bm 1_{n ^\prime}^\top \bm\zeta\right)^2}{n ^\prime}}. \label{eq:4}
+	\end{align}
+	Substituting \eqref{eq:4} into \eqref{eq:0}, we obtain:
+	\begin{equation}
+		\bm w' = \bm 1_{n ^\prime} \pm \frac{Q}{\sqrt{\left\|\bm\zeta\right\|_2^2 - \displaystyle\frac{\left(\bm 1_{n ^\prime}^\top \bm\zeta\right)^2}{n ^\prime}}} \left(- \bm\zeta + \frac{\bm 1_{n ^\prime}^\top \bm\zeta}{n ^\prime}\bm 1_{n ^\prime}\right). \label{eq:5}
+	\end{equation}
+	Multiplying both sides of \eqref{eq:5} by $\bm \zeta$, we obtain:
+	\begin{align}
+		\bm\zeta^\top \bm w' & = \bm 1_{n ^\prime}^\top \bm\zeta \pm \frac{Q}{\sqrt{\left\|\bm\zeta\right\|_2^2 - \displaystyle\frac{\left(\bm 1_{n ^\prime}^\top \bm\zeta\right)^2}{n ^\prime}}} \left(- \left\|\bm\zeta\right\|_2^2 + \frac{\bm 1_{n ^\prime}^\top \bm\zeta}{n ^\prime}\bm\zeta^\top \bm 1_{n ^\prime}\right) \nonumber\\
+		& = \bm 1_{n ^\prime} ^\top \bm\zeta \mp Q \sqrt{\left\|\bm\zeta\right\|_2^2 - \displaystyle\frac{\left(\bm 1_{n ^\prime}^\top \bm\zeta\right)^2}{n ^\prime}}
+	\end{align}
+	Finally, we obtain the minimum value of $\bm\zeta^\top \bm w'$:
+	\begin{align}
+		\min_{\bm w' \in {\cal W'}} \bm\zeta^\top \bm w' = \bm 1_{n ^\prime} ^\top \bm\zeta - Q \sqrt{\left\|\bm\zeta\right\|_2^2 - \displaystyle\frac{\left(\bm 1_{n ^\prime}^\top \bm\zeta\right)^2}{n ^\prime}} \nonumber
+	\end{align}
+\end{proof}
+
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
+\subsection{Use of strongly-convex regularization functions other than L2-regularization} \label{app:regularization-functions}
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
+
+Let us consider the use of regularization functions other than L2-regularization, assuming that the function is $\kappa$-strongly convex to satisfy the conditions for applying DRCS. For L2-regularization, the term
+$\rho^*\left(\frac{1}{\sum_{i\in[n]} v_i w_i}(\operatorname{diag}(\bm v\otimes\bm w \otimes \bm y) \Phi)^\top\bm\alpha_{\bm 1_n, \bm 1_n}^{*} \right)$
+in the duality gap \eqref{eq:duality_gap} simplifies to a quadratic function with respect to $\bm w$. However, for other regularization functions, even if they are $\kappa$-strongly convex, the behavior can differ significantly, potentially complicating the application of DRCS.
+
+As a famous example, consider the \emph{elastic net} regularization \cite{zou05regularization}. With hyperparameters $\lambda > 0$ and $\lambda^\prime > 0$, the regularization function and its convex conjugate are defined as follows:
+\begin{align*}
+& \rho(\bm\beta) := \frac{\lambda}{2}\|\bm\beta\|_2^2 + \lambda^\prime\|\bm\beta\|_1, \\
+& \rho^*(\bm p) = \frac{1}{2\lambda}\sum_{j\in \left[d\right]}\left[\max\{0, |p_j| - \lambda^\prime \}\right]^2.
+\end{align*}
+In this case, the term
+\begin{gather*}
+	\rho^*\left(\frac{1}{\sum_{i\in[n]} v_i w_i}(\operatorname{diag}(\bm v\otimes\bm w \otimes \bm y) \Phi)^\top \bm\alpha_{\bm 1_n, \bm 1_n}^{*} \right) \\
+	= \frac{1}{2\lambda} \sum_{j\in \left[d\right]} \left[\max\{0, \left|\frac{1}{\sum_{i\in[n]} v_i w_i}(\bm v \otimes \bm w \otimes \bm \alpha_{\bm 1_n, \bm 1_n}^{*} \otimes \bm y \otimes \Phi_{:j})\right| - \lambda^\prime \}\right]^2
+\end{gather*}
+requires maximization with respect to $\bm w$, which is nontrivial and introduces additional complexity.
+
+Next, we discuss a sufficient condition for regularization functions that allows weighted regularized empirical risk minimization to support both kernelization and DRCS.
+
+% \newpage
+
+\begin{lemma}
+In weighted regularized empirical risk minimization as defined in \ref{eq:primal}, the regularization function $\rho$ can support both DRCS and kernelization if it is described as:
+\[
+\rho(\bm\beta) = \frac{\kappa}{2}\|\bm\beta\|_2^2 + {\cal H}(\|\bm\beta\|_2),
+\]
+where ${\cal H}: \mathbb{R}_{\geq 0} \to \mathbb{R}$ is an increasing function and $\kappa$ is a positive constant.
+\end{lemma}
+
+\begin{proof}
+According to the \emph{generalized representer theorem} \cite{scholkopf2001generalized}, weighted regularized empirical risk minimization can be kernelized if the regularization function $\rho$ can be expressed in terms of a strictly increasing function ${\cal G}: \mathbb{R}_{\geq 0} \to \mathbb{R}$ as $\rho(\bm\beta) = {\cal G}(\|\bm\beta\|_2)$.
+
+By combining this requirement with the condition for applying DRCS, which demands that $\rho$ be $\kappa$-strongly convex, we obtain the stated form of $\rho$.
+\end{proof}
+
+
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % %
+\subsection{Methods for Greedy Coreset Selection} \label{app:algorithm}
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % %
+
+% まず、小規模データに対する準最適化の手順を示した疑似コードを，Algorithm \ref{alg:1}に示す．
+%
+A naive greedy approach involves removing the training instance that minimizes \eqref{eq:main-bound} one at a time (this approach is referred to as {\tt greedy approach 1}).
+%
+First, the pseudocode of {\tt greedy approach 1} for small datasets is given in Algorithm \ref{alg:1}.
+%
+\begin{algorithm}[H]
+  \renewcommand{\algorithmicrequire}{\textbf{Input:}}
+  \renewcommand{\algorithmicensure}{\textbf{Output:}}
+  \caption{Distributionally Robust Coreset Selection for Small Datasets}
+  \label{alg:1}
+  \begin{algorithmic}[1]
+      \Require Dataset ${\mathcal D} := \{(\bm x_i, y_i)\}_{i \in [n]}$, matrix $A$, vector $\bm b$, constant $c$
+
+      % \State Calculate $A \gets \frac{1}{2\lambda}\operatorname{diag}(\boldsymbol{\alpha}^{* \mathrm{old}(\tilde{\bm{w}})} \otimes \boldsymbol{y})^{\top} K \operatorname{diag}(\boldsymbol{\alpha}^{* \mathrm{old}(\tilde{\bm{w}})} \otimes \boldsymbol{y})$
+      % \State Calculate $\bm b \gets \left[\max \left\{0,1-y_i\phi(\bm x_{i})\bm\beta^{*\mathrm{old}(\tilde{\bm w})}\right\}-\alpha^{* \mathrm{old}(\tilde{\bm{w}})}_i\right]_{i=1} ^n$
+      % \State Calculate $c \gets \frac{1}{2\lambda}\operatorname{diag}(\tilde{\boldsymbol{w}} \otimes \boldsymbol{\alpha}^{* \mathrm{old}(\tilde{\bm{w}})} \otimes \boldsymbol{y})^{\top} K \operatorname{diag}(\tilde{\boldsymbol{w}} \otimes \boldsymbol{\alpha}^{* \mathrm{old}(\tilde{\bm{w}})} \otimes \boldsymbol{y})$
+      \State Initialize $\boldsymbol{v} \gets \{1\}^n$
+      \State Set desired number of deletions, $n^\mathrm{del}$
+
+      \While{number of deletions is less than $n^\mathrm{del}$}
+          \For{each $i$ where $v_i = 1$}
+              \State Set $\boldsymbol{v'} \gets \boldsymbol{v}$ and $v'_i \gets 0$ \Comment{Remove $i$-th element from $\boldsymbol{v}$}
+              \State Compute the duality gap when a instance is removed:
+              \[
+              {\rm DG}_i = \max_{\boldsymbol{w} \in \mathcal{W}} \left\{(\boldsymbol{v'} \otimes \boldsymbol{w})^\top A (\boldsymbol{v'} \otimes \boldsymbol{w}) + \bm b^\top (\boldsymbol{v'} \otimes \boldsymbol{w}) + c \right\}
+              \]
+              \State Store ${\rm DG}_i$
+          \EndFor
+          \State Find the index $i^*$ corresponding to the smallest ${\rm DG}_i$ value
+          \State Set $v_{i^*} \gets 0$ \Comment{Remove the element with the smallest maximum value}
+
+          \State Update $\boldsymbol{v}$ and repeat the process
+      \EndWhile
+
+      \State Construct the subset $\hat{\mathcal{D}}=\left\{\bm x_{i}, y_i \mid \left\{\bm x_{i}, y_i\right\} \in \mathcal{D}, v_i=1\right\}$;
+      % \Ensure Optimized decision variable $\boldsymbol{v}$ after desired number of deletions
+      \Ensure Selected dataset: $\hat{\mathcal{D}}$
+
+  \end{algorithmic}
+\end{algorithm}
+
+Next, the pseudocode of {\tt greedy approach 2} for large datasets is given in Algorithm \ref{alg:2}.
+%
+It performs the maximization calculation once at the beginning, and then sequentially performs instance selection.
+%
+\newpage
+
+%
+\begin{algorithm}[H]
+  \renewcommand{\algorithmicrequire}{\textbf{Input:}}
+  \renewcommand{\algorithmicensure}{\textbf{Output:}}
+  \caption{Distributionally Robust Coreset Selection for Large Datasets}
+  \label{alg:2}
+  \begin{algorithmic}[1]
+      \Require Dataset ${\mathcal D} := \{(\bm x_i, y_i)\}_{i \in [n]}$, matrix $A$, vector $\bm b$, constant $c$
+
+      % \State Calculate $A \gets \frac{1}{2\lambda}\operatorname{diag}(\boldsymbol{\alpha}^{* \mathrm{old}(\tilde{\bm{w}})} \otimes \boldsymbol{y})^{\top} K \operatorname{diag}(\boldsymbol{\alpha}^{* \mathrm{old}(\tilde{\bm{w}})} \otimes \boldsymbol{y})$
+      % \State Calculate $\bm b \gets \left[\max \left\{0,1-y_i\phi(\bm x_{i})\bm\beta^{*\mathrm{old}(\tilde{\bm w})}\right\}-\alpha^{* \mathrm{old}(\tilde{\bm{w}})}_i\right]_{i=1} ^n$
+      % \State Calculate $c \gets \frac{1}{2\lambda}\operatorname{diag}(\tilde{\boldsymbol{w}} \otimes \boldsymbol{\alpha}^{* \mathrm{old}(\tilde{\bm{w}})} \otimes \boldsymbol{y})^{\top} K \operatorname{diag}(\tilde{\boldsymbol{w}} \otimes \boldsymbol{\alpha}^{* \mathrm{old}(\tilde{\bm{w}})} \otimes \boldsymbol{y})$
+      \State Initialize $\boldsymbol{v} \gets \{1\}^n$
+      \State Compute worst-case weight that maximize the duality gap :
+      \[
+      \bm w^{\mathrm{worst}} = \argmax_{\boldsymbol{w} \in \mathcal{W}} \left\{(\boldsymbol{v} \otimes \boldsymbol{w})^\top A (\boldsymbol{v} \otimes \boldsymbol{w}) + \bm b^\top (\boldsymbol{v} \otimes \boldsymbol{w}) + c\right\}
+      \]
+      \State Set desired number of deletions, $n^\mathrm{del}$
+
+      \While{number of deletions is less than $n^\mathrm{del}$}
+          \For{each $i$ where $v_i = 1$}
+              \State Set $\boldsymbol{v'} \gets \boldsymbol{v}$ and $v'_i \gets 0$ \Comment{Remove $i$-th element from $\boldsymbol{v}$}
+              \State Calculate ${\rm DG}_i \gets (\boldsymbol{v'} \otimes \boldsymbol{w}^{\mathrm{worst}})^\top A (\boldsymbol{v'} \otimes \boldsymbol{w}^{\mathrm{worst}}) + \bm b^\top (\boldsymbol{v'} \otimes \boldsymbol{w}^{\mathrm{worst}}) + c$
+              \State Store ${\rm DG}_i$
+          \EndFor
+          \State Find the index $i^*$ corresponding to the smallest ${\rm DG}_i$ value
+          \State Set $v_{i^*} \gets 0$ \Comment{Remove the element with the smallest maximum value}
+
+          \State Update $\boldsymbol{v}$ and repeat the process
+      \EndWhile
+
+      \State Construct the subset $\hat{\mathcal{D}}=\left\{\bm x_{i}, y_i \mid \left\{\bm x_{i}, y_i\right\} \in \mathcal{D}, v_i=1\right\}$;
+      % \Ensure Optimized decision variable $\boldsymbol{v}$ after desired number of deletions
+      \Ensure Selected dataset: $\hat{\mathcal{D}}$
+
+  \end{algorithmic}
+\end{algorithm}
+
+Then, the pseudocode of {\tt greedy approach 3} for large datasets is given in Algorithm \ref{alg:3}.
+
+%
+\begin{algorithm}[H]
+  \renewcommand{\algorithmicrequire}{\textbf{Input:}}
+  \renewcommand{\algorithmicensure}{\textbf{Output:}}
+  \caption{Distributionally Robust Coreset Selection for Large Datasets}
+  \label{alg:3}
+  \begin{algorithmic}[1]
+      \Require Dataset ${\mathcal D} := \{(\bm x_i, y_i)\}_{i \in [n]}$, matrix $A$, vector $\bm b$, constant $c$
+
+      % \State Calculate $A \gets \frac{1}{2\lambda}\operatorname{diag}(\boldsymbol{\alpha}^{* \mathrm{old}(\tilde{\bm{w}})} \otimes \boldsymbol{y})^{\top} K \operatorname{diag}(\boldsymbol{\alpha}^{* \mathrm{old}(\tilde{\bm{w}})} \otimes \boldsymbol{y})$
+      % \State Calculate $\bm b \gets \left[\max \left\{0,1-y_i\phi(\bm x_{i})\bm\beta^{*\mathrm{old}(\tilde{\bm w})}\right\}-\alpha^{* \mathrm{old}(\tilde{\bm{w}})}_i\right]_{i=1} ^n$
+      % \State Calculate $c \gets \frac{1}{2\lambda}\operatorname{diag}(\tilde{\boldsymbol{w}} \otimes \boldsymbol{\alpha}^{* \mathrm{old}(\tilde{\bm{w}})} \otimes \boldsymbol{y})^{\top} K \operatorname{diag}(\tilde{\boldsymbol{w}} \otimes \boldsymbol{\alpha}^{* \mathrm{old}(\tilde{\bm{w}})} \otimes \boldsymbol{y})$
+      \State Initialize $\boldsymbol{v} \gets \{1\}^n$
+      \State Compute worst-case weight that maximize the duality gap :
+      \[
+      \bm w^{\mathrm{worst}} = \argmax_{\boldsymbol{w} \in \mathcal{W}} \left\{(\boldsymbol{v} \otimes \boldsymbol{w})^\top A (\boldsymbol{v} \otimes \boldsymbol{w}) + \bm b^\top (\boldsymbol{v} \otimes \boldsymbol{w}) + c\right\}
+      \]
+      \State Set desired number of deletions, $n^\mathrm{del}$
+
+			\For{each $i\in[n]$}
+					\State Set $\boldsymbol{v'} \gets \boldsymbol{v}$ and $v'_i \gets 0$ \Comment{Remove $i$-th element from $\boldsymbol{v}$}
+					\State Calculate ${\rm DG}_i \gets (\boldsymbol{v'} \otimes \boldsymbol{w}^{\mathrm{worst}})^\top A (\boldsymbol{v'} \otimes \boldsymbol{w}^{\mathrm{worst}}) + \bm b^\top (\boldsymbol{v'} \otimes \boldsymbol{w}^{\mathrm{worst}}) + c$
+					\State Store ${\rm DG}_i$
+			\EndFor
+			\State Identify $n^\mathrm{del}$ smallest $\mathrm{DG}_i$'s, and set $v_{i} \gets 0$ for these $i$'s, or $v_{i} \gets 1$ otherwise
+
+      \State Construct the subset $\hat{\mathcal{D}}=\left\{\bm x_{i}, y_i \mid \left\{\bm x_{i}, y_i\right\} \in \mathcal{D}, v_i=1\right\}$;
+      % \Ensure Optimized decision variable $\boldsymbol{v}$ after desired number of deletions
+      \Ensure Selected dataset: $\hat{\mathcal{D}}$
+
+  \end{algorithmic}
+\end{algorithm}
+
+
+% ここで，アルゴリズム内で計算する双対ギャップ${\rm DG}_i$は$\bm w$に関して2次凸関数である．
+%
+Here, the duality gap ${\rm DG}_i$ computed within the algorithm is a quadratic convex function with respect to $\bm w$.
+%
+% $\mathcal{W}$における${\rm DG}_i$の制約付き最大化を解く方法として，ラグランジュの未定乗数法を適用する．このとき，すべての定常点がアルゴリズム的に計算できるので，最大化できる．
+%
+As a method to solve the constrained maximization of ${\rm DG}_i$ in $\mathcal{W}$, we apply method of Lagrange multiplier. In this case, since all stationary points can be computed algorithmically, maximization is achievable.
+%
+% 証明は \cite{hanada2024distributionallyrobustsafesample}のAppendixを参照されたい．
+For the proof, please refer to the Appendix of \citet{hanada2024distributionallyrobustsafesample}.
+%
+% この最大化計算は、$O\left(n^3\right)$時間を要する。そのため、最大化計算を繰り返し要求するAlgorithm\ref{alg:1}を、大規模データに適用することは困難である。
+%
+This maximization calculation requires $O\left(n^3\right)$ time.
+%
+For this reason, applying Algorithm \ref{alg:1}, which repeatedly requires maximization calculations, to large datasets is computationally expensive.
+%
+Therefore, Algorithm~\ref{alg:2}, which reduces the number of maximization computations, is also considered.
+%
+Furthermore, in large datasets, the computational cost increases even in the instance selection process by $v$.
+%
+In order to avoid an increase in computational cost, we adopt Algorithm~\ref{alg:3} for lage datasets in Section~\ref{subsec:result-image}.
+
+% \newpage

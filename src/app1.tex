@@ -1,0 +1,70 @@
+
+\section{Proofs of general lemmas} \label{app:general-lemmas}
+
+In this appendix, we present a collection of lemmas that are utilized in other sections of the appendix.
+
+\begin{lemma}\label{lem:fenchel-moreau} \emph{(Fenchel-Moreau theorem)}
+Let $f: \mathbb{R}^d\to\mathbb{R}\cup\{+\infty\}$ be a convex function. The biconjugate $f^{**}$ (\red{$= (f^*)^*$}) coincides with $f$ if $f$ is convex, proper (i.e., $\exists \bm p\in\mathbb{R}^d:~f(\bm p) < +\infty$), and lower-semicontinuous.
+\end{lemma}
+
+\begin{proof}
+Refer to Section 12 of \citep{rockafellar1970convex} for details.
+\end{proof}
+
+As a specific instance of Lemma \ref{lem:fenchel-moreau}, the result holds when $f$ is finite-valued ($\forall \bm p\in\mathbb{R}^d:~f(\bm p)<+\infty$) and convex.
+
+\begin{lemma}\label{lem:strong-convexity-smoothness}
+For a convex function $f: \mathbb{R}^d\to\mathbb{R}\cup\{+\infty\}$, the following statements hold:
+\begin{itemize}
+\item If $f$ is proper and $\nu$-smooth, then $f^*$ is $(1/\nu)$-strongly convex.
+\item If $f$ is proper, lower-semicontinuous, and $\kappa$-strongly convex, then $f^*$ is $(1/\kappa)$-smooth.
+\end{itemize}
+\end{lemma}
+
+\begin{proof}
+See Section X.4.2 of \citep{hiriart1993convex} for further explanation.
+\end{proof}
+
+\begin{corollary} \label{cor:strong-convexity-smoothness}
+Assume that the regularization function $\rho$ in \eqref{eq:primal} is $\kappa$-strongly convex, a condition necessary for applying DRCS. Then, by Lemma \ref{lem:strong-convexity-smoothness}, $\rho^*$ must be $(1/\kappa)$-smooth. This ensures that $\rho^*$ cannot take infinite values in this context.
+\end{corollary}
+
+\begin{lemma}\label{lem:strong-convexity-sphere}
+Let $f: \mathbb{R}^d\to\mathbb{R}\cup\{+\infty\}$ be a $\kappa$-strongly convex function, and let $\bm p^* = \targmin_{\bm p\in\mathbb{R}^d} f(\bm p)$ be its minimizer. For any $\bm p\in\mathbb{R}^d$, the following inequality holds:
+\begin{align*}
+\| \bm p - \bm p^* \|_2 \leq \sqrt{\frac{2}{\kappa}[f(\bm p) - f(\bm p^*)]}.
+\end{align*}
+\end{lemma}
+
+\begin{proof}
+Refer to \citep{ndiaye2015gap} for a detailed proof.
+\end{proof}
+
+\begin{lemma} \label{lem:optimize-linear}
+For any vectors $\bm a, \bm c\in\mathbb{R}^n$ and a positive scalar $S > 0$, the following holds:
+\begin{align*}
+& \min_{\bm p\in\mathbb{R}^n:~\|\bm p - \bm c\|_2\leq S} \bm a^\top \bm p = \bm a^\top \bm c - S\|\bm a\|_2, \\
+& \max_{\bm p\in\mathbb{R}^n:~\|\bm p - \bm c\|_2\leq S} \bm a^\top \bm p = \bm a^\top \bm c + S\|\bm a\|_2.
+\end{align*}
+\end{lemma}
+
+\begin{proof}
+Using the Cauchy-Schwarz inequality, we derive:
+\begin{align*}
+& -\|\bm a\|_2 \|\bm p - \bm c\|_2 \leq \bm a^\top (\bm p - \bm c) \leq \|\bm a\|_2 \|\bm p - \bm c\|_2.
+\end{align*}
+The first inequality becomes an equality if $\exists\omega>0:~\bm a = -\omega(\bm p - \bm c)$, and the second inequality becomes an equality if $\exists\omega^\prime>0:~\bm a = \omega^\prime(\bm p - \bm c)$. 
+
+Since $\|\bm p - \bm c\|_2\leq S$, we also have:
+\begin{align*}
+& - S \|\bm a\|_2 \leq \bm a^\top (\bm p - \bm c) \leq S \|\bm a\|_2,
+\end{align*}
+with equality when $\|\bm p - \bm c\|_2 = S$.
+
+The optimal $\bm p$ satisfying these conditions is:
+\begin{itemize}
+\item $\bm p = \bm c - (S/\|\bm a\|_2)\bm a$ for the minimum, and
+\item $\bm p = \bm c + (S/\|\bm a\|_2)\bm a$ for the maximum.
+\end{itemize}
+Thus, the minimum and maximum values of $\bm a^\top (\bm p - \bm c)$ are $- S \|\bm a\|_2$ and $S \|\bm a\|_2$, respectively, completing the proof.
+\end{proof}

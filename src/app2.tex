@@ -1,0 +1,159 @@
+\section{Proofs of Definition~\ref{def:dual}}
+
+
+% \subsection{Accuracy on test samples from the current distribution
+% }
+% \label{app:current_dist}
+% %
+% Under the same setting as in Section\ref{subsec:classification}, we consider the case where the model parameter changes due to factors such as sample deletion.  
+% %  
+% For the test dataset $(X^{\prime}, \boldsymbol{y}^{\prime})$, if the feasible range $\mathcal{B}$ of the model parameter $\boldsymbol{\beta}$ during retraining is known, classification can be performed according to \eqref{eq:bound_clf}. Based on this, the upper and lower bounds of the accuracy after retraining can be calculated.  
+% %  
+% Specifically, the range of accuracy can be guaranteed as shown in \eqref{eq:guarantee}.  
+% %
+% \begin{equation}
+%   \label{eq:guarantee}
+%   \begin{gathered}
+%     \frac{n_\mathrm{incorrect}}{n_\mathrm{all}} \leq A_\mathrm{test} \leq \frac{n_\mathrm{incorrect} + {n_\mathrm{unknown}}}{n_\mathrm{all}} \\
+%     \text{where} \quad n_\mathrm{correct} = \sum_{i \in\left[m\right]} I\left[\min_{\boldsymbol{\beta} \in \mathcal{B}} \operatorname{diag}(\bm y)\Phi^{\prime}_{i:} \boldsymbol{\beta} > 0\right], \quad n_\mathrm{incorrect} = \sum_{i \in\left[m\right]} I\left[\max_{\boldsymbol{\beta} \in \mathcal{B}} \operatorname{diag}(\bm y)\Phi^{\prime}_{i:} \boldsymbol{\beta} < 0\right] \\
+%     n_\mathrm{unknown} = \sum_{i \in\left[m\right]} I\left[\min_{\boldsymbol{\beta} \in \mathcal{B}} \operatorname{diag}(\bm y)\Phi^{\prime}_{i:} \boldsymbol{\beta} > 0, \quad \max_{\boldsymbol{\beta} \in \mathcal{B}} \operatorname{diag}(\bm y)\Phi^{\prime}_{i:} \boldsymbol{\beta} < 0\right]
+%   \end{gathered}
+% \end{equation}
+% %
+% Here, $n_\mathrm{all}$ represents the total number of test samples, $n_\mathrm{correct}$ is the number of correctly classified samples, $n_\mathrm{incorrect}$ is the number of incorrectly classified samples, and $n_\mathrm{unknown}$ is the number of unclassified samples.  
+% %  
+% Equation~\eqref{eq:guarantee} can be interpreted as follows:  
+% %  
+% If all unclassified samples $n_\mathrm{unknown}$ are incorrectly classified, the accuracy reaches its theoretical minimum, corresponding to the leftmost side of the inequality.  
+% %  
+% Conversely, if all unclassified samples are correctly classified, the accuracy reaches its theoretical maximum, corresponding to the rightmost side of the inequality.  
+% %  
+% Thus, if the feasible range $\mathcal{B}$ of the retrained parameter $\boldsymbol{\beta}$ is known, the accuracy after retraining is guaranteed to lie within the bounds of \eqref{eq:guarantee}, providing a theoretical guarantee of the accuracy range.  
+% %  
+% If the feasible range $\mathcal{B}$ is a hypersphere of radius $R$, then according to \eqref{eq:linear_score}, a larger radius $R$ expands the possible range of the margin $\operatorname{diag}(\bm y)\Phi^{\prime}_{i:} \boldsymbol{\beta}$, increasing the number of unclassified test samples $n_\mathrm{unknown}$.  
+% %  
+% This, in turn, results in a lower bound of accuracy, reflecting a potential decrease in the guaranteed minimum accuracy.  
+%
+
+
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
+\subsection{Derivation of Dual Problem by Fenchel's Duality Theorem} \label{app:fenchel}
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
+
+
+We follow the formulation of Fenchel's duality theorem as provided in Section 31 of \cite{rockafellar1970convex}.
+
+\begin{lemma}[A specific form of Fenchel's duality theorem: $f, g<+\infty$] \label{lm:Fenchel-duality}
+Let $f: \mathbb{R}^n\to\mathbb{R}$ and $g: \mathbb{R}^d\to\mathbb{R}$ be convex functions, and let $A\in\mathbb{R}^{n\times d}$ be a matrix. Define
+\begin{align}
+& \bm p^* := \min_{\bm p\in\mathbb{R}^d} [f(A\bm p) + g(\bm p)], \label{eq:FD-primal} \\
+& \bm u^* := \max_{\bm u\in\mathbb{R}^n} [-f^*(-\bm u) - g^*(A^\top \bm u)]. \label{eq:FD-dual}
+\end{align}
+According to Fenchel's duality theorem, the following equalities and conditions hold:
+\begin{align*}
+& f(A\bm p^*) + g(\bm p^*) = -f^*(-\bm u^*) - g^*(A^\top \bm u^*), \\
+& -\bm u^* \in \partial f(A \bm p^*), \\
+& \bm p^* \in \partial g^*(A^\top \bm u^*).
+\end{align*}
+\end{lemma}
+
+\begin{proof}
+Introducing a dummy variable $\bm\psi\in\mathbb{R}^n$ and a Lagrange multiplier $\bm u\in\mathbb{R}^n$, the problem can be rewritten as:
+\begin{align}
+& \min_{\bm p\in\mathbb{R}^d} [f(A\bm p) + g(\bm p)]
+	= \max_{\bm u\in\mathbb{R}^n} \min_{\bm p\in\mathbb{R}^d,~\bm\psi\in\mathbb{R}^n} [f(\bm\psi) + g(\bm p) - \bm u^\top(A\bm p - \bm\psi)] \label{eq:Fenchel-Lagrange}\\
+& = -\min_{\bm u\in\mathbb{R}^n} \max_{\bm p\in\mathbb{R}^d,~\bm\psi\in\mathbb{R}^n} [-f(\bm\psi) - g(\bm p) + \bm u^\top(A\bm p - \bm\psi)] \nonumber\\
+& = -\min_{\bm u\in\mathbb{R}^n} \max_{\bm p\in\mathbb{R}^d,~\bm\psi\in\mathbb{R}^n} [\{(-\bm u)^\top \bm\psi - f(\bm\psi)\} + \{(A^\top \bm u)^\top \bm p - g(\bm p)\}] \nonumber\\
+& = -\min_{\bm u\in\mathbb{R}^n} [f^*(-\bm u) + g^*(A^\top \bm u)]
+	= \max_{\bm u\in\mathbb{R}^n} [-f^*(-\bm u) - g^*(A^\top \bm u)]. \label{eq:Fenchel-dual}
+\end{align}
+The optimal solutions $\bm p^*$, $\bm\psi^*$, and $\bm u^*$ must satisfy the following conditions based on the optimality criteria:
+\begin{align*}
+A \bm p^* = \bm\psi^*,
+\quad
+A^\top \bm u^* \in \partial g(\bm p^*),
+\quad
+-\bm u^* \in \partial f(\bm\psi^*) = \partial f(A \bm p^*).
+\end{align*}
+
+Similarly, introducing a dummy variable $\bm\phi\in\mathbb{R}^d$ and a Lagrange multiplier $\bm p\in\mathbb{R}^d$, the dual problem can be reformulated as:
+\begin{align}
+& \max_{\bm u\in\mathbb{R}^n} [-f^*(-\bm u) - g^*(A^\top \bm u)]
+	= \min_{\bm p\in\mathbb{R}^d} \max_{\bm u\in\mathbb{R}^n, \bm\phi\in\mathbb{R}^d} [-f^*(-\bm u) - g^*(\bm\phi) - \bm p^\top(A^\top \bm u - \bm\phi)] \label{eq:Fenchel-dual-Lagrange}\\
+& = \min_{\bm p\in\mathbb{R}^d} \max_{\bm u\in\mathbb{R}^n, \bm\phi\in\mathbb{R}^d} [\{(A\bm p)^\top(-\bm u) - f^*(-\bm u)\} + \{\bm p^\top \bm\phi - g^*(\bm\phi)\}] \nonumber\\
+& = \min_{\bm p\in\mathbb{R}^d} [f^{**}(A\bm p) + g^{**}(\bm p)]
+	= \min_{\bm p\in\mathbb{R}^d} [f(A\bm p) + g(\bm p)], \quad (\because~\text{Lemma \ref{lem:fenchel-moreau}}) \nonumber
+\end{align}
+The optimal solutions $\bm u^*$, $\bm\phi^*$, and $\bm p^*$ for the dual problem satisfy:
+\begin{align*}
+A^\top \bm u^* = \bm\phi^*,
+\quad
+\bm p^* \in \partial g^*(\bm\phi^*) = \partial g^*(A^\top \bm u^*),
+\quad
+A \bm p^* \in \partial f(-\bm u^*).
+\end{align*}
+\end{proof}
+
+
+\begin{lemma}[Dual problem of weighted regularized empirical risk minimization] \label{lm:dual-WRERM}
+	Let us consider linear predictions including the kernel method. For the minimization problem
+	\begin{align*}
+	& \bm\beta_{\bm v, \bm w}^* := \argmin_{\bm\beta\in\mathbb{R}^k} P_{\bm v, \bm w}(\bm\beta), \nonumber
+		\quad
+		\text{where}
+		\quad
+		P_{\bm v, \bm w}(\bm\beta) = \frac{1}{\sum_{i\in[n]} v_i w_i}\sum_{i\in[n]} v_i w_i \ell(y_i, \bm{\beta}^\top \bm\phi(\bm{x}_i)) + \rho(\bm\beta).
+	\end{align*}
+	The corresponding dual problem, obtained by applying Fenchel's duality theorem (Lemma \ref{lm:Fenchel-duality}), is given by
+	\begin{gather}
+		\bm\alpha_{\bm v, \bm w}^* := \argmax_{\bm\alpha\in\mathbb{R}^n} D_{\bm w}(\bm\alpha), \nonumber \\
+		\text{where} \quad
+		D_{\bm v,\bm w}(\bm\alpha) = - \frac{1}{\sum_{i\in[n]} v_i w_i}\sum_{i\in[n]} v_i w_i \ell^*(-\alpha_i) - \rho^*\left(\frac{1}{\sum_{i\in[n]} v_i w_i}(\operatorname{diag}(\bm v\otimes\bm w \otimes \bm y) \Phi)^\top\bm\alpha \right).
+		\tag{(\ref{eq:dual}) restated}
+	\end{gather}
+	Here, let us denote $\Phi:=\left[\bm\phi(\bm x_1)\quad\bm\phi(\bm x_2) \ldots \bm\phi(\bm x_n)\right]^{\top} \in \RR^{n\times k}$.
+	The primal and dual solutions, $\bm\beta_{\bm v, \bm w}^*$ and $\bm\alpha_{\bm v, \bm w}^*$, satisfy the following conditions:
+	\begin{align*}
+	& P_{\bm v, \bm w}(\bm\beta_{\bm v, \bm w}^*) = D_{\bm v, \bm w}(\bm\alpha_{\bm v, \bm w}^*), \\
+	& \bm\beta_{\bm v, \bm w}^* \in \partial\rho^*((\operatorname{diag}(\bm v \otimes \bm w \otimes \bm y)\Phi)^\top \bm\alpha_{\bm v, \bm w}^*), \\
+	& \forall i\in[n]:\quad -\alpha^*_{\bm v, \bm w, i} \in \partial\ell(y_i, \bm\beta_{\bm v, \bm w}^{* \top} \bm\phi(\bm{x}_i)).
+	\end{align*}
+	\end{lemma}
+	
+	\begin{proof}
+	To apply Fenchel's duality theorem, we set $f$, $g$, and $A$ in Lemma \ref{lm:Fenchel-duality} as:
+	\begin{align*}
+	f(\bm u) := \frac{1}{\sum_{i\in[n]} v_i w_i} \sum_{i \in\left[n\right]} v_i w_i \ell(u_i),
+	\quad
+	g(\bm\beta) := \rho(\bm\beta),
+	\quad
+	A := \operatorname{diag}(\bm y)\Phi.
+	\end{align*}
+	The conjugate function of $f$ is computed as:
+	\begin{align*}
+	& f^*(\bm u)
+		= \sup_{\bm u^\prime\in\mathbb{R}^n} \left[\bm u^\top \bm u^\prime - \frac{1}{E} \sum_{i \in\left[n\right]} v_i w_i \ell(u^\prime_i)\right]
+		= \frac{1}{E} \sum_{i \in\left[n\right]} v_i w_i \ell^*\left(\frac{u_i}{v_i w_i} {E} \right),
+	\end{align*}
+	where let us denote $E = \sum_{i\in[n]} v_i w_i$.
+	Thus, the dual objective from \eqref{eq:FD-dual} becomes:
+	\begin{align*}
+	-f^*(-\bm u) - g^*(A^\top \bm u)
+	= - \frac{1}{E} \sum_{i \in\left[n\right]} v_i w_i \ell^*\left(- \frac{u_i}{v_i w_i} {E} \right) - \rho^*((\operatorname{diag}(\bm y)\Phi)^\top \bm u).
+	\end{align*}
+	Rewriting $u_i \leftarrow \frac{1}{E} v_i w_i \alpha_i$, or equivalently $\bm u \leftarrow \frac{1}{E} (\bm v \otimes \bm w \otimes \bm\alpha)$, we obtain the dual problem of \red{\eqref{eq:dual}}.
+	
+	The relationships between the primal and dual problems can be expressed as:
+	\begin{align*}
+	& -\bm u^* \in \partial f(A \bm p^*)
+		~\Rightarrow~
+		-\frac{1}{E}(\bm v \otimes \bm w \otimes \bm\alpha_{\bm v, \bm w}^*) \in \partial f(\operatorname{diag}(\bm y)\Phi \bm\beta_{\bm v, \bm w}^*)\\
+		& \Rightarrow
+		-\frac{1}{E}v_i w_i \alpha^*_{\bm v, \bm w, i} \in \frac{1}{E}v_i w_i \partial\ell(y_i, \bm\beta_{\bm v, \bm w}^{* \top} \bm\phi(\bm{x}_i))
+		\Rightarrow -\alpha^*_{\bm v, \bm w, i} \in \partial\ell(y_i, \bm\beta_{\bm v, \bm w}^{* \top} \bm\phi(\bm{x}_i)), \\
+		& \bm p^* \in \partial g^*(A^\top \bm u^*)
+		~\Rightarrow~
+		\bm\beta_{\bm v, \bm w}^* \in \partial g^*((\operatorname{diag}(\bm y)\Phi)^\top (\bm v \otimes \bm w \otimes \bm\alpha_{\bm v, \bm w}^*))
+		= \partial\rho^*((\operatorname{diag}(\bm v \otimes \bm w \otimes \bm y)\Phi)^\top \bm\alpha_{\bm v, \bm w}^*).
+	\end{align*}
+	\end{proof}
