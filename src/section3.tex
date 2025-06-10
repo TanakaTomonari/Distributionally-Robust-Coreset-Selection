@@ -6,7 +6,7 @@
 
 %
 In this section, we present the proposed method to solve DRCS problem in \eqref{eq:DRCS-problem}.
-\red{As discussed in the previous section, since it is difficult to directly minimize the validation error (equation \ref{eq:WrVaEr}), we show how to derive and minimize its upper bound. Also, since it still includes difficult problems (a combinatorial optimization and an alternative optimization), we show specific algorithm to solve it using a greedy optimization.}
+{As discussed in the previous section, since it is difficult to directly minimize the validation error (equation \ref{eq:WrVaEr}), we show how to derive and minimize its upper bound. Also, since it still includes difficult problems (a combinatorial optimization and an alternative optimization), we show specific algorithm to solve it using a greedy optimization.}
 
 \subsection{Upper Bound for the Worst-case Test Error}
 \label{subsec:UB_WC}
@@ -18,7 +18,7 @@ In this subsection, we present our main result.
 An upper bound of the worst-case weighted validation error, which can serve as the worst-case test error estimator, $ {\rm WrVaEr}(\bm v) $ in \eqref{eq:WrVaEr}, is presented in the following theorem. Our main result can be formulated as \eqref{eq:main-bound}.
 
 \begin{definition}
-\red{For a convex function $f:\mathbb{R}^n\to\mathbb{R}$, its {\em convex conjugate} $f^*:\mathbb{R}^n\to\mathbb{R}\cup\{+\infty\}$ is defined as $f^*(\bm\beta) = \sup_{\bm\beta^\prime\in\mathbb{R}^n}(\bm\beta^\top\bm\beta^\prime - f(\bm\beta^\prime))$.}
+{For a convex function $f:\mathbb{R}^n\to\mathbb{R}$, its {\em convex conjugate} $f^*:\mathbb{R}^n\to\mathbb{R}\cup\{+\infty\}$ is defined as $f^*(\bm\beta) = \sup_{\bm\beta^\prime\in\mathbb{R}^n}(\bm\beta^\top\bm\beta^\prime - f(\bm\beta^\prime))$.}
 \end{definition}
 
 \begin{definition}
@@ -31,7 +31,7 @@ For $\argmin_{\bm\beta} P_{\bm v,\bm w}(\bm \beta)$ in \eqref{eq:primal}, we def
 \label{eq:dual}
 D_{\bm v,\bm w}(\bm\alpha) = - \frac{1}{\sum_{i\in[n]} v_i w_i}\sum_{i\in[n]} v_i w_i \ell^*(-\alpha_i) - \rho^*\left(\frac{1}{\sum_{i\in[n]} v_i w_i}(\operatorname{diag}(\bm v\otimes\bm w \otimes \bm y) \Phi)^\top\bm\alpha \right).
 \end{align}
-where $\Phi:=\left[\bm\phi(\bm x_1)\quad\bm\phi(\bm x_2) \ldots \bm\phi(\bm x_n)\right]^{\top} \in \RR^{n\times k}$, \red{and $\otimes$ is the element-wise product}.
+where $\Phi:=\left[\bm\phi(\bm x_1)\quad\bm\phi(\bm x_2) \ldots \bm\phi(\bm x_n)\right]^{\top} \in \RR^{n\times k}$, {and $\otimes$ is the element-wise product}.
 %
 Here, especially, if $\rho(\bm\beta) := \frac{\lambda}{2}\|\bm\beta\|_2^2$, it is calculated as
 \begin{align}
@@ -107,7 +107,7 @@ The proof sketch of Theorem~\ref{theo:main} is primarily divided into the follow
   \item
   First, as a premise, consider a model where $P_{\boldsymbol{w}}$ is $\mu$-strongly convex.
   \item
-  Second, under \red{the point 1 above}, derive the bound of model parameters. The model parameter vector ${\bm \beta}^*_{\bm v, \bm w}$, trained using the coreset vector $\bm v$ and weight vector $\bm w$, is guaranteed to converge within the range ${\cal B}^*_{\bm v, \bm w}$, which is represented by an L2-norm hypersphere \citep{10.1162/neco_a_01619}. 
+  Second, under {the point 1 above}, derive the bound of model parameters. The model parameter vector ${\bm \beta}^*_{\bm v, \bm w}$, trained using the coreset vector $\bm v$ and weight vector $\bm w$, is guaranteed to converge within the range ${\cal B}^*_{\bm v, \bm w}$, which is represented by an L2-norm hypersphere \citep{10.1162/neco_a_01619}. 
   %
   A hypersphere of the radius is given by $R = \sqrt{\frac{2}{\lambda}{\rm DG}(\bm v, \bm w)}$, which is calculated in \eqref{eq:duality_gap}.
   %
@@ -119,7 +119,7 @@ The proof sketch of Theorem~\ref{theo:main} is primarily divided into the follow
   This upper bound is determined by ${\rm DG}$. The larger ${\rm DG}$, the greater the upper bound becomes.
   %
   \item
-  Fourth, maximize ${\rm DG}$ with respect to the weight vector $\bm w$ for training dataset in \eqref{eq:maximum-gap}. We can obtain an upper bound of the worst-case weighted valdation error.
+  Fourth, maximize ${\rm DG}$ with respect to the weight vector $\bm w$ for training dataset in \eqref{eq:maximum-gap}. We can obtain an upper bound of the worst-case weighted validation error.
 		We can easily confirm that ${\rm DG}(\bm v, \bm w)$ is a convex function with respect to $\bm w$,
 		and therefore its maximization is difficult in general.
 		However, if we use L2-regularization, it becomes a convex quadratic function and its maximization
@@ -164,7 +164,7 @@ A naive greedy approach, referred to as {\tt greedy approach 1}, repeats the fol
 %
 Although {\tt greedy approach 1} is sufficient for small datasets, the computational cost becomes prohibitively high for larger datasets.
 %
-The most significant computational cost in calculating the bound in \eqref{eq:main-bound} lies in the eigendecomposition of $A$ in \eqref{eq:maximum-gap}, required to determine ${\rm max}_{\bm w \in \cW}{\rm DG}(\bm v, \bm w)$, \red{which needs $O(n^3)$ time with a naive computation, or $O(n^2)$ if it is approximated}.
+The most significant computational cost in calculating the bound in \eqref{eq:main-bound} lies in the eigendecomposition of $A$ in \eqref{eq:maximum-gap}, required to determine ${\rm max}_{\bm w \in \cW}{\rm DG}(\bm v, \bm w)$, {which needs $O(n^3)$ time with a naive computation, or $O(n^2)$ if it is approximated}.
 %
 To circumvent this cost, another approach, referred to as {\tt greedy approach 2}, does not update $\bm w$ whenever an instance is removed, but instead fixes $\bm w$ optimized with initial $\bm v$ (i.e., $\bm v = \bm 1_n$) (Algorithm~\ref{alg:2}).
 %
@@ -174,7 +174,7 @@ Moreover, as a much simpler approach, referred to as {\tt greedy approach 3}, de
 %
 These greedy approaches are heuristics and do not guarantee optimality. However, in Section~\ref{sec:experiment}, we demonstrate that these approaches facilitate the selection of a coreset, effectively mitigating the increase in worst-case test error.
 
-\red{The time complexities of these algorithms are as follows (if eigendecomposition is not approximated), where $n^{\rm del}$ is the number of deletions:
+{The time complexities of these algorithms are as follows (if eigendecomposition is not approximated), where $n^{\rm del}$ is the number of deletions:
 $O(n^4 n^{\rm del})$ for greedy approach 1,
 $O(n^3 n^{\rm del})$ for greedy approach 2, and
 $O(n^3 + n^{\rm del})$ for greedy approach 3.}

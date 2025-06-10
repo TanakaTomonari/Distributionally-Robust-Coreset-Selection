@@ -138,10 +138,10 @@ Given a coreset vector $\bm v \in \{0, 1\}^n$ and a weight vector $\bm w \in \cW
  P_{\bm v, \bm w}(\bm \beta).
 \end{align}
 
-Given a weight vector $\bm{w}^\prime \in \mathbb{R}^{n^\prime}$ for validation dataset, let us consider the weighted validation error for the optimal model parameter vector in \eqref{eq:beta-star} can be defined as  
+Given a weight vector $\bm{w}^\prime \in \mathbb{R}^{n^\prime}$ for validation dataset, the weighted validation error for the optimal model parameter vector in \eqref{eq:beta-star} can be defined as  
 \begin{align}
 \label{eq:VaEr}
-{\rm VaEr}(\bm{v}, \bm{w}^\prime) 
+{\rm VaEr}(\bm{v}, \red{\bm{w}, \bm{w}^\prime}) 
 := 
 \frac{1}{\sum_{i \in [n^\prime]} w_i^\prime} 
 \sum_{i \in [n^\prime]} 
@@ -168,8 +168,9 @@ As an estimator of the worst-case test error, it is reasonable to use the worst-
 \label{eq:WrVaEr}
 {\rm WrVaEr}(\bm{v}) 
 = 
-\max_{\bm{w} \in \red{\cW^\prime}}
-{\rm VaEr}(\bm{v}, \bm{w}).
+\red{\max_{\bm{w} \in {\cW}^\prime}
+\max_{\bm{w} \in {\cW}}}
+{\rm VaEr}(\bm{v}, \red{\bm{w}, \bm{w}^\prime}).
 \end{align}
 %
 Based on the above discussion, the goal of the DRCS problem is formulated as the problem of finding the coreset vector $\bm v \in \{0, 1\}^n$ that minimizes the worst-case weighted validation error in \eqref{eq:WrVaEr}.
@@ -188,16 +189,16 @@ Then, the DRCS problem we consider is formulated as
 
 By summarizing equations \ref{eq:beta-star}, \ref{eq:VaEr}, \ref{eq:WrVaEr} and \ref{eq:DRCS-problem}, minimizing the worst-case weighted validation error (WrVaEr) can be expressed as:
 \begin{equation} \label{eq:obj-acc-lb}
-  \min_{\bm v} \max_{\bm w} \min_{\bm \beta} {\rm VaEr}(\bm{v}, \bm{w}, \bm{\beta}).
+  \min_{\bm v} \red{\max_{\bm w^\prime}} \max_{\bm w} \min_{\bm \beta} {\rm VaEr}(\bm{v}, \bm{w}, \red{\bm{w}^\prime}, \bm{\beta}).
 \end{equation}
 
 Unfortunately, the problem in \eqref{eq:DRCS-problem} is highly challenging.  
 %
-First, it involves trilevel optimization over three types of vectors: $ \bm{v} $, $ \bm{w} $, and $ \bm{\beta} $.
+\red{First, it involves complex optimization over four types of vectors: $ \bm{v} $, $ \bm{w} $, $ \bm{w}^\prime $, and $ \bm{\beta} $.}
 %
-Trilevel optimization is technically complex as it requires solving nested optimization problems across three hierarchical levels, involving a large number of variables and significantly increasing computational complexity, along with the difficulty of ensuring convergence and global optimality.  
+This optimization is technically complex as it requires solving nested optimization problems across \red{four} hierarchical levels, involving a large number of variables and significantly increasing computational complexity, along with the difficulty of ensuring convergence and global optimality.  
 %
-Moreover, the third-level optimization for $ \bm{v} \in \{0, 1\}^n $ is a combinatorial optimization problem, which becomes infeasible to solve optimally when $ n $ is large.  
+Moreover, the \red{fourth}-level optimization for $ \bm{v} \in \{0, 1\}^n $ is a combinatorial optimization problem, which becomes infeasible to solve optimally when $ n $ is large.  
 %
 To address these technical challenges, our approach involves the following two steps:  
 \begin{itemize}  

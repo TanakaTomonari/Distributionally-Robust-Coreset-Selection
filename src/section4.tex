@@ -5,7 +5,7 @@
 \subsection{Related Works}
 \label{subsec:related}
 
-\textbf{Coreset Selection}
+\textbf{Coreset Selection.}
 Coreset selection is a technique for selecting important data samples in training to enhance data efficiency, reduce the computational cost, and maintain or improve model accuracy.
 %
 Currently, several approaches exist, each differing in how they evaluate the importance of data.
@@ -30,9 +30,9 @@ Error/Loss-Based Methods select important samples based on loss function values 
 %
 Examples include GraNd\citep{paul2021deep} and EL2N\citep{paul2021deep}, which are based on the magnitude of the loss.
 %
-\red{\textbf{Sensitivity-Based Methods:}}
+\textbf{Sensitivity-Based Methods:}
 %
-\red{Sensitivity-Based Methods are similar to Error/Loss-Based Methods, however, for each sample, its importance value is defined by the maximum of the relative loss (ratio of the loss of the sample to the sum of the losses of all samples) among all possible model parameters. It can assure the upper bound of the model parameter shifts by the coreset selection in more strict manner (called the \emph{$\varepsilon$-coreset}) \citep{munteanu2018coresets,tukan2020coresets,tuka2021coresets,tolochinksy2022generic,alishahi2024dimensional}.}
+Sensitivity-Based Methods are similar to Error/Loss-Based Methods, however, for each sample, its importance value is defined by the maximum of the relative loss (ratio of the loss of the sample to the sum of the losses of all samples) among all possible model parameters. It can assure the upper bound of the model parameter shifts by the coreset selection in more strict manner (called the \emph{$\varepsilon$-coreset}) \citep{munteanu2018coresets,tukan2020coresets,tuka2021coresets,tolochinksy2022generic,alishahi2024dimensional}.
 %
 \textbf{Decision Boundary-Based Methods:}
 %
@@ -60,7 +60,7 @@ Examples of submodular functions include Graph Cut (GC), Facility Location (FL),
 %
 Other approaches can be found, for example, in \citet{guo2022deepcore}.
 
-\textbf{Distributionally Robust}
+\textbf{Distributionally Robust.}
 DR has been studied in various machine learning problems to enhance model robustness against variations in data distribution.
 %
 The DR learning problem is generally formulated as a worst-case optimization problem to account for potential distributional shifts.

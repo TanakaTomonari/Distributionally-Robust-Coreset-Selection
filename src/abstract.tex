@@ -1,15 +1,13 @@
 
 \begin{abstract}
 
-Coreset selection, which involves selecting a small subset from an existing training dataset, is an approach to reducing training data, and various approaches have been proposed for this method.
+Coreset selection, which involves selecting a small subset from an existing training dataset, is an approach to reducing training data size, and various approaches have been proposed for this method.
 %
 In practical situations where these methods are employed, it is often the case that the data distributions differ between the development phase and the deployment phase, with the latter being unknown.
 %
 Thus, it is challenging to select an effective subset of training data that performs well across all deployment scenarios.
 %
-We therefore propose Distributionally Robust Coreset Selection~(DRCS).
-%
-DRCS theoretically derives an estimate of the upper bound for the worst-case test error, assuming that the future covariate distribution may deviate within a defined range from the training distribution.
+We therefore propose Distributionally Robust Coreset Selection~(DRCS), which theoretically derives an estimate of the upper bound for the worst-case test error, assuming that the future covariate distribution may deviate within a defined range from the training distribution.
 %
 Furthermore, by selecting instances in a way that suppresses the estimate of the upper bound for the worst-case test error, DRCS achieves distributionally robust training instance selection.
 %

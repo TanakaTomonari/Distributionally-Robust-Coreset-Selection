@@ -11,7 +11,7 @@
 	%
 	The datasets are primarily designed for binary classification, and for multi-class datasets, two classes are extracted and used.
 	%
-	\red{We set $S$ with a parameter $a$ as $S = \sqrt{n^+}|a - 1|$, where $n^+$ is the number of positive instances in the training dataset. We defined as above since it is equivalent to the case when the class balance is changed; if the weights of all positive instances (${i \mid y_i = +1}$) change from 1 to $a$ while the weights for negative instances (${i \mid y_i = -1}$) remain at 1, $S$ is calculated as above. $a = 1$ means that no distribution change occurs.}
+	We set $S$ with a parameter $a$ as $S = \sqrt{n^+}|a - 1|$, where $n^+$ is the number of positive instances in the training dataset. We defined as above since it is equivalent to the case when the class balance is changed; if the weights of all positive instances (${i \mid y_i = +1}$) change from 1 to $a$ while the weights for negative instances (${i \mid y_i = -1}$) remain at 1, $S$ is calculated as above. $a = 1$ means that no distribution change occurs.
 	%We assume that the weights for positive instances (${i \mid y_i = +1}$) change from 1 to $a$, while the weights for negative instances (${i \mid y_i = -1}$) remain at 1.
 	%
 	%The magnitude of this weight change is then defined as $S$. Specifically, we set $S = \sqrt{n^+}|a - 1|$, where $n^+$ is the number of positive instances in the training dataset.
@@ -22,7 +22,7 @@
 	%
 	In the learning setup of this paper, we adopt the empirical risk minimization approach as shown in \eqref{eq:primal}, and thus the regularization parameter $\lambda$ is determined based on the number of instances.
 	%
-	Specifically, we first present results obtained by retraining with $\lambda$ that is determined by cross-varidation. Results for other values of $\lambda$ will be discussed later in Section \ref{subsec:discussion-lambda}.
+	Specifically, we first present results obtained by retraining with $\lambda$ that is determined by cross-validation. Results for other values of $\lambda$ will be discussed later in Section \ref{subsec:discussion-lambda}.
 	%
 	Details of implementations are presented in Appendix~\ref{app:implementation}, and details of data setups and hyperparameters are presented in Appendix~\ref{app:experimental-setup}.
 
@@ -32,14 +32,13 @@
 
 	In this section, we present the experimental results for tabular datasets.
 	%
-	The experiments in this section were conducted using an logistic regression model (logistic loss + L2 regularization), with Radial Basis Function (RBF) kernels
+	The experiments in this section were conducted using a logistic regression model (logistic loss + L2 regularization), with Radial Basis Function (RBF) kernels
 	\footnote{Hyperparameters of RBF kernel are determined with heuristics; see Appendix~\ref{app:experimental-setup}} \citep{scholkopf2001generalized} applied to the datasets listed in Table \ref{tab:dataset-SS}.
 	%
-	In this experiment for tabular data, we adopt Algorithm~\ref{alg:1} for calucuration of the upper bound in \eqref{eq:main-bound}.
+	In this experiment for tabular data, we adopt Algorithm~\ref{alg:1} for calculation of the upper bound in \eqref{eq:main-bound}.
 
-	{\bf Baselines} The baseline methods for comparing coreset selection are as follows:
-	geometry based mehods: (a)Herding \citep{welling2009herding}, (b)k-Center-Greedy \citep{sener2017active}, uncertainty-based methods:(c) Margin(:a method that selects instances closest to the decision boundary (margin).
-	) Other method: (d)Random sampling.
+	{\bf Baselines.} The baseline methods for comparing coreset selection are as follows:
+	geometry based methods: (a)Herding \citep{welling2009herding}, (b)k-Center-Greedy \citep{sener2017active}, uncertainty-based methods: (c) Margin(:a method that selects instances closest to the decision boundary (margin).) Other method: (d)Random sampling.
 	For table datasets, methods that do not rely on deep learning are chosen.
 
 	The results are shown in Figure \ref{fig:result-table-acc} and \ref{fig:result-table-guarantee}. The horizontal axis represents the size of the selected dataset, where moving to the right indicates a smaller selected dataset.
@@ -50,7 +49,7 @@
 	%
 	In Figure~\ref{fig:result-table-acc}, the proposed method demonstrates the higher weighted validation accuracy compared to other methods.
 	%
-	\red{We also found that, depending on setups, existing methods (that do not consider DR) may end in worse performance than random sample removal. This implies that, to achieve good coreset selection under DR, the consideration of DR is essential.}
+	We also found that, depending on setups, existing methods (that do not consider DR) may end in worse performance than random sample removal. This implies that, to achieve good coreset selection under DR, the consideration of DR is essential.
 	%
 	All results for other datasets, other $\lambda$ and support vector machine model are presented in Appendix~\ref{app:result-logistic} and \ref{app:result-svm}.
 
@@ -77,11 +76,11 @@
 
 \subsection{Coreset Selection for Image Data}
 	\label{subsec:result-image}
-	This section discusses coreset selection for image datasets. \red{As discussed in Section \ref{sec:applicable-class},} although the proposed method is not specifically designed for deep learning, it can be applied to image data by leveraging Neural Tangent Kernels (NTK)\citep{neuraltangents2020} or using the layers preceding the final layer of a deep learning model as a feature extractor.
+	This section discusses coreset selection for image datasets. As discussed in Section \ref{sec:applicable-class}, although the proposed method is not specifically designed for deep learning, it can be applied to image data by leveraging Neural Tangent Kernels (NTK)\citep{neuraltangents2020} or using the layers preceding the final layer of a deep learning model as a feature extractor.
 	%
 	In this experiment, considering future extensibility, we apply the proposed method to features extracted from images using a feature extractor.
 	%
-	The experimental results using NTK will be included in the Appendix~\ref{app:result-ntk}.
+	The experimental results using NTK are included in the Appendix~\ref{app:result-ntk}.
 	%
 	In this paper, we evaluate the DRCS method using the CIFAR10 dataset \citep{cifar10}.  
 	%  
@@ -103,9 +102,9 @@
 	%  
 	The feature extractor is trained under the same settings as described in the earlier experimental setup.
 	%
-	In this experiment for image data, we adopt Algorithm~\ref{alg:2} for calucuration of the bound in \eqref{eq:main-bound}.
+	In this experiment for image data, we adopt Algorithm~\ref{alg:2} for calculation of the bound in \eqref{eq:main-bound}.
 	
-	{\bf Baselines} The baseline methods for comparing coreset selection are as follows:
+	{\bf Baselines.} The baseline methods for comparing coreset selection are as follows:
 	uncertainty-based method:(a)Least Confidence \citep{coleman2019selection}, error/loss-based methods: (b)GraNd \citep{paul2021deep}, (c)DeepFool \citep{ducoffe2018adversarial}, Gradient matching-based method: (d)GradMatch \citep{killamsetty2021grad}, Bilevel optimization-based method: (e)Glister \citep{killamsetty2021glister}, Submodularity-based method: (f)Log-Determinant \citep{iyer2021submodular}.
 	For image datasets, comparative experiments were conducted, including methods designed for deep learning.
 	%
@@ -150,7 +149,7 @@
 	\includegraphics[width=0.8\textwidth]{fig/image/cifar10_1.05.pdf}
 	\end{tabular}
 	\end{center}
-	\caption{we compare our proposed method with several instance selection baselines with respect to the weighted validation accuracy ($1-{\rm VaEr}$). Our method exhibits superior performance generally.}
+	\caption{We compare our proposed method with several instance selection baselines with respect to the weighted validation accuracy ($1-{\rm VaEr}$). Our method exhibits superior performance generally.}
 	\label{fig:result-image}
 	\end{figure}
 	\end{minipage}
@@ -184,13 +183,13 @@
 			\end{tabular}
 		\end{center}
 		\caption{The results represent the model performance across varying values of lambda. The top row corresponds to the
-		weighted validation accuracy ($1-{\rm VaEr}$), and the bottom row to the lower bound of the worst-case weighted validation accuracy ($1-{\rm WrVaEr^{\rm UB}}$). The first column shows results for \(\lambda = n \cdot 10^{-3}\), the second column for \(\lambda = \lambda_{\rm best}\) by cross-varidation, the third column for \(\lambda = n \cdot 10^{-1.5}\), and the fourth column for \(\lambda = n\).}
+		weighted validation accuracy ($1-{\rm VaEr}$), and the bottom row to the lower bound of the worst-case weighted validation accuracy ($1-{\rm WrVaEr^{\rm UB}}$). The first column shows results for \(\lambda = n \cdot 10^{-3}\), the second column for \(\lambda = \lambda_{\rm best}\) by cross-validation, the third column for \(\lambda = n \cdot 10^{-1.5}\), and the fourth column for \(\lambda = n\).}
 		\label{fig:guarantee}
 	\end{figure}
 
 	Figure~\ref{fig:guarantee} illustrates the number of removed instances that can be theoretically guaranteed for specific accuracy levels across different values of $\lambda$.  
 	%  
-	Fisrt, let us compare the columns in the top row of Figure~\ref{fig:guarantee}.  
+	First, let us compare the columns in the top row of Figure~\ref{fig:guarantee}.  
 	%
 	In the first and fourth columns, it can be observed that the performance of the proposed method deteriorates in the later stages.
 	%

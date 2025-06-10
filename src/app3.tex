@@ -118,7 +118,7 @@ Next, we calculate a bound of the weighted validation error using ${\cal B}_{\bm
 		n_\mathrm{unknown}^{(\bm w')} & = \sum_{i \in\left[n^ \prime \right]} w_i' I\left[\min_{\bm{\beta} \in {\cal B}_{\bm{v}, \bm{w}}} y_i^{\prime} \bm{\beta}^\top \bm\phi(\bm x^{\prime}_{i}) < 0, \quad \max_{\bm{\beta} \in {\cal B}_{\bm{v}, \bm{w}}} y_i^{\prime} \bm{\beta}^\top \bm\phi(\bm x^{\prime}_{i}) > 0\right], \label{eq:unknown-bound}\\
 		n^\prime & = n_{\rm surelycorrect}^{(\bm w')} + n_{\rm surelyincorrect}^{(\bm w')} + n_{\rm unknown}^{(\bm w')} =
 		%\sum_{i \in\left[n^ \prime \right]} w_i'.
-		\red{\bm 1_{n ^\prime}^\top \bm w'}.
+		\bm 1_{n ^\prime}^\top \bm w'.
 		\label{eq:n-all}
 	\end{align}
 \end{theorem}
@@ -240,7 +240,8 @@ As $R$ increases, a lower bound is more likely to take negative values, while an
 	%
 	% これは、再学習時の正解率の下限を理論的に保証することを意味している。
 	%
-	This implies a theoretical guarantee for an upper bound of the worst-case test error after retraining.
+	% This implies a theoretical guarantee for an upper bound of the worst-case test error after retraining.
+	This provides a theoretical upper-bound guarantee on the worst-case test error after retraining.
 
 
 
@@ -369,7 +370,7 @@ First, the pseudocode of {\tt greedy approach 1} for small datasets is given in 
       \While{number of deletions is less than $n^\mathrm{del}$}
           \For{each $i$ where $v_i = 1$}
               \State Set $\boldsymbol{v'} \gets \boldsymbol{v}$ and $v'_i \gets 0$ \Comment{Remove $i$-th element from $\boldsymbol{v}$}
-              \State Compute the duality gap when a instance is removed:
+              \State Compute the duality gap when an instance is removed:
               \[
               {\rm DG}_i = \max_{\boldsymbol{w} \in \mathcal{W}} \left\{(\boldsymbol{v'} \otimes \boldsymbol{w})^\top A (\boldsymbol{v'} \otimes \boldsymbol{w}) + \bm b^\top (\boldsymbol{v'} \otimes \boldsymbol{w}) + c \right\}
               \]
@@ -489,6 +490,6 @@ Therefore, Algorithm~\ref{alg:2}, which reduces the number of maximization compu
 %
 Furthermore, in large datasets, the computational cost increases even in the instance selection process by $v$.
 %
-In order to avoid an increase in computational cost, we adopt Algorithm~\ref{alg:3} for lage datasets in Section~\ref{subsec:result-image}.
+In order to avoid an increase in computational cost, we adopt Algorithm~\ref{alg:3} for large datasets in Section~\ref{subsec:result-image}.
 
 % \newpage
