@@ -58,7 +58,7 @@ In this study, we consider a distributionally robust learning scenario where the
 %
 This distributionally robust learning problem is formulated as  
 \begin{align}  
-\max_{\bm{w} \in \cW} \min_{\bm{\beta}} {\frac{1}{\sum_{i \in [n]} w_i}} \sum_{i \in [n]} w_i \ell(y_i, f(\bm{x}_i; \bm{\beta})) + \rho(\bm{\beta}),  
+\red{\min_{\bm{\beta}} \max_{\bm{w} \in \cW}} {\frac{1}{\sum_{i \in [n]} w_i}} \sum_{i \in [n]} w_i \ell(y_i, f(\bm{x}_i; \bm{\beta})) + \rho(\bm{\beta}),  
 \end{align}  
 where  
 \begin{align}  
